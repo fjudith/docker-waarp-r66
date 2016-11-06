@@ -15,6 +15,7 @@ Waarp R66 : software for massive file transfer with monitoring, file watcher and
 Run the Waarp-R66 image
 
 `docker run --name='waarp-r66' -it --rm -p 6666:6666 -p 6667:6667 -p 8066:8066 -p 8067:8067 fjudith/waarp-r66`
+
 NOTE: Please alow a few minutes for the application to start, especially if populating a remote database at first lauch. If you want to make sure that everythin went fine, whatch the logs:
 
 ```
