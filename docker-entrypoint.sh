@@ -28,6 +28,11 @@ echo 'Initializing Waarp command line tools'
 echo --------------------------------------------------
 . /usr/share/waarp/init-commands.sh
 
+if [ ! -f "/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml" ]; then
+    mkdir -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
+    cp -v /etc/waarp/conf.d/template/*.xml /etc/waarp/conf.d/${WAARP_APPNAME}/
+fi
+
 echo --------------------------------------------------
 echo 'Initializing Waarp password file'
 echo --------------------------------------------------

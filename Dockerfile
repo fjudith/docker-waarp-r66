@@ -128,6 +128,7 @@ ADD assets/bin/ /usr/bin/
 ADD assets/certs/* /etc/waarp/certs/
 ADD assets/conf.d/ /etc/waarp/conf.d/
 
+COPY assets/supervisord.conf /etc/
 COPY assets/init-functions /usr/share/waarp/
 COPY assets/*.sh /usr/share/waarp/
 RUN chmod +x /usr/share/waarp/* && \
@@ -146,5 +147,9 @@ EXPOSE 8066 8067
 EXPOSE 8088
 
 WORKDIR /usr/share/waarp
+
+RUN yum install -y supervisor && yum clean all
+
+
+# ENTRYPOINT ["/usr/bin/supervisord","-c","/etc/supervisord.conf","-n"]
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["bash"]
