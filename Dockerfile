@@ -7,7 +7,6 @@ ENV WAARP_GWFTP_VERSION=3.0.4
 ENV WAARP_PASSWORD_VERSION=3.0.2
 
 ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
-ENV FTP_CLASSPATH="/usr/share/waarp/gwftp-lib/WaarpGatewayFtp-${WAARP_GWFTP_VERSION}.jar:/usr/share/waarp/gwftp-lib/*"
 ENV SERVER_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml"
 ENV CLIENT_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/client.xml"
 
@@ -49,7 +48,6 @@ RUN pushd /tmp/ && \
 	curl -O https://dl.waarp.org/dist/waarp-gateway-ftp/3.0/waarp-gateway-ftp-3.0.4.zip && \
 	unzip -x /tmp/waarp-gateway-ftp-3.0.4.zip -d /tmp/ && \
 	cp /tmp/waarp-gateway-ftp-3.0.4/lib/*.jar /usr/share/waarp/r66-lib/ && \
-	cp /tmp/waarp-gateway-ftp-3.0.4/lib/*.jar /usr/share/waarp/gwftp-lib/ && \
 	rm -rf /tmp/waarp-gateway-ftp-3.0.4 && \
 	popd
 
@@ -148,8 +146,4 @@ EXPOSE 8088
 
 WORKDIR /usr/share/waarp
 
-RUN yum install -y supervisor && yum clean all
-
-
-# ENTRYPOINT ["/usr/bin/supervisord","-c","/etc/supervisord.conf","-n"]
 ENTRYPOINT ["/docker-entrypoint.sh"]
