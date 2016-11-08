@@ -120,13 +120,15 @@ ENV WAARP_KEYSTOREPASS="password"
 ENV WAARP_KEYPASS="password"
 ENV WAARP_TRUSTKEYSTOREPASS="password"
 
+# SNMP
+ENV WAARP_SNMP_AUTHPASS="password"
+ENV WAARP_SNMP_PRIVPASS="password"
 
 # Waarp binaries and configuration files
 ADD assets/bin/ /usr/bin/
 ADD assets/certs/* /etc/waarp/certs/
 ADD assets/conf.d/ /etc/waarp/conf.d/
 
-COPY assets/supervisord.conf /etc/
 COPY assets/init-functions /usr/share/waarp/
 COPY assets/*.sh /usr/share/waarp/
 RUN chmod +x /usr/share/waarp/* && \

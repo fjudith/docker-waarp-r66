@@ -17,6 +17,9 @@
     <checkaddress>False</checkaddress>
     <checkclientaddress>False</checkclientaddress>
     <multiplemonitors>1</multiplemonitors>
+    <pastlimit>86400000</pastlimit>
+    <minimaldelay>5000</minimaldelay>
+    <snmpconfig></snmpconfig>
   </server>
   <network>
     <serverport>6666</serverport>

@@ -4,12 +4,12 @@ Waarp R66 : software for massive file transfer with monitoring, file watcher and
 
 ## Docker image roadmap
 
-[X] Password and SSL key automation
+[X] Password and SSL automation
 [X] Transparent support of linked Mysql/MariaDB
 [X] Transparent support of linked PostgreSQL
 [ ] Waarp Gateway FTP support (n. Not decided yet on on building a separated image)
-[ ] SNMP support
-[ ] Allow change of listening ports via environment variables
+[X] REST API support
+[X] SNMP support
 
 # Quick start
 Run the Waarp-R66 image
@@ -76,6 +76,13 @@ The following variables allows to set the various keys and passwords required to
 * **WAARP_KEYSTOREPASS**: Waarp keystore.  Default=`password`
 * **WAARP_KEYPASS**: Waarp keypass.  Default=`password`
 * **WAARP_TRUSTKEYSTOREPASS**: Trusted keystore.  Default=`password`
+
+### SNMP
+
+Only SNMPv2 and SNMPv3 (SHA/AES 256) is enabled by default.
+
+* **WAARP_SNMP_AUTHPASS**: SNMPv3 auth password. Default=`password`
+* **WAARP_SNMP_PRIVPASS**: SNMPv3 priv password. Default=`password`
 
 # Deployment using PostgreSQL
 Database is created by the database container and automatically populated by the application container on first run.

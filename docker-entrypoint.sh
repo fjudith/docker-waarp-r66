@@ -1,5 +1,5 @@
 #! /bin/bash
-set -e
+#set -e
 
 export JAVA_HOME=$(readlink -f $(dirname $(readlink -f $(which java)))/..)
 export JAVA_OPTS1="-server"
@@ -25,13 +25,13 @@ export JAVARUNFTPSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${FTP_CLASS
 
 echo --------------------------------------------------
 echo 'Initializing Waarp command line tools'
+echo 'Deploying XML configuration files if required'
 echo --------------------------------------------------
 . /usr/share/waarp/init-commands.sh
 
-if [ ! -f "/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml" ]; then
-    mkdir -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
-    cp -v /etc/waarp/conf.d/template/*.xml /etc/waarp/conf.d/${WAARP_APPNAME}/
-fi
+mkdir -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
+cp -vn /etc/waarp/conf.d/template/*.xml /etc/waarp/conf.d/${WAARP_APPNAME}/
+
 
 echo --------------------------------------------------
 echo 'Initializing Waarp password file'
@@ -111,41 +111,16 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_trust.jks" ]; then
 fi
 
 echo --------------------------------------------------
-echo 'Initializing Waarp password file'
+echo 'Initializing Waarp SNMP file'
 echo --------------------------------------------------
-if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_admkey.jks" ]; then
-    echo "Generating admin key"
-    
-    keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEY_ALG} \
-    -alias "${WAARP_APPNAME}_admkey" \
-    -dname "{WAARP_SSL_DNAME}"
-    -keystore "/etc/waarp/certs/${WAARP_APPNAME}_admkey.jks" \
-    -storepass "${WAARP_ADMKEYSTOREPASS}" \
-    -keypass "${WAARP_ADMKEYPASS}"
+xmlstarlet ed -P -S -L \
+-u "/config/server/snmpconfig" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/snmpconfig.xml" \
+${SERVER_CONFIG}
 
-    xmlstarlet ed -P -S -L \
-    -u "/config/server/admkeypath" -v 
-    -u "/config/server/admkeystorepass" -v ${WAARP_ADMKEYSTOREPASS}  \
-    -u "/config/server/admkeypass" -v ${WAARP_ADMKEYPASS}
-fi
-
-echo --------------------------------------------------
-echo 'Initializing Waarp password file'
-echo --------------------------------------------------
-if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_admkey.jks" ]; then
-    echo "Generating admin key"
-    
-    keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEY_ALG} \
-    -alias ${WAARP_APPNAME}_admkey \
-    -dname {WAARP_SSL_DNAME}
-    -keystore /etc/waarp/certs/${WAARP_APPNAME}_admkey.jks \
-    -storepass ${WAARP_ADMKEYSTOREPASS} \
-    -keypass ${WAARP_ADMKEYPASS}
-
-    xmlstarlet ed -P -S -L \
-    -u "/config/server/admkeystorepass" -v ${WAARP_ADMKEYSTOREPASS}  \
-    -u "/config/server/admkeypass" -v ${WAARP_ADMKEYPASS}
-fi
+xmlstarlet ed -P -S -L \
+-u "/snmpconfig/securities/security/securityauthpass" -v ${WAARP_SNMP_AUTHPASS} \
+-u "/snmpconfig/securities/security/securityprivpass" -v ${WAARP_SNMP_PRIVPASS} \
+/etc/waarp/conf.d/${WAARP_APPNAME}/snmpconfig.xml
 
 echo --------------------------------------------------
 echo 'Initializing Waarp authentication XML file'
