@@ -36,11 +36,11 @@ PID=`cat $PIDFILE 2> /dev/null`
 CONFDIR=${CONFDIR:-${BINDIR}/../etc}
 R66CONF=${CONFDIR}/client.xml
 GWFTPCONF=${CONFDIR}/gwftp.xml
-AUTHENTCONF=${CONFDIR}/authent-ftp.xml
+AUTHENTCONF=${CONFDIR}/GwFTP-authent.xml
 
 
 function gwftp_start {
-    $JAVARUNFTPSERVER org.waarp.gateway.ftp.ExecGatewayFtpServer ${GWFTPCONF} ${R66CONF} 2>&- >&- &
+    $JAVARUNSERVER org.waarp.gateway.ftp.ExecGatewayFtpServer ${GWFTPCONF} ${R66CONF} 2>&- >&- &
     retval=$?
     pid=$!
 
@@ -63,7 +63,7 @@ function gwftp_start {
 
 function gwftp_initdb {
     echo -n "Initializing database... "
-    output=$($JAVARUNFTPSERVER org.waarp.gateway.ftp.ServerInitDatabase ${GWFTPCONF} -initdb)
+    output=$($JAVARUNSERVER org.waarp.gateway.ftp.ServerInitDatabase ${GWFTPCONF} -initdb)
     retval=$?
 
     if [[ "$output" == *"SQL Exception"* ]]; then
@@ -99,7 +99,7 @@ function gwftp_initdb {
 
 gwftp_logexport() {
     echo -n "Exporting transfer log... " >&2
-    $JAVARUNFTPSERVER org.waarp.gateway.ftp.LogExport ${GWFTPCONF} "$@"
+    $JAVARUNSERVER org.waarp.gateway.ftp.LogExport ${GWFTPCONF} "$@"
     retval=$?
     if (( ! $retval ))
     then

@@ -1,28 +1,27 @@
 # Instroduction
 
-Waarp R66 : software for massive file transfer with monitoring, file watcher and distributed architecture over Linux, Unix and Windows.
+Waarp Gateway Ftp: Service extension to [Waarp-R66](https://hub.docker.com/r/fjudith/waarp-r66/)
 
 ## Docker image roadmap
 
 [X] Password and SSL automation
 [X] Transparent support of linked Mysql/MariaDB
 [X] Transparent support of linked PostgreSQL
-[ ] Waarp Gateway FTP support (n. Not decided yet on on building a separated image)
-[X] REST API support
 [X] SNMP support
 
 # Quick start
-Run the Waarp-R66 image
+Run the Waarp-GwFTP image
 
-`docker run --name='waarp-r66' -it --rm -p 6666:6666 -p 6667:6667 -p 8066:8066 -p 8067:8067 fjudith/waarp-r66`
+`docker run --name='waarp-gwftp' -it --rm -p 6621:6621 -p 50001-65534:50001-65534 -p 8076:8076 -p 8077:8077 fjudith/waarp-gwftp`
 
 NOTE: Please alow a few minutes for the application to start, especially if populating a remote database at first lauch. If you want to make sure that everythin went fine, whatch the logs:
 
-```
-docker exec -it waarp-r66 bash
+```bash
+docker exec -it waarp-gwftp bash
 tail -f /var/log/waarp/${WAARP_APPNAME}.log
 ```
-Go  to http://localhost:8066 or point to the IP address of your docker host. On Mac or Windows, replace `localhost`with the address of your Docker host which you can get using:
+
+Go  to http://localhost:8074 or point to the IP address of your docker host. On Mac or Windows, replace `localhost`with the address of your Docker host which you can get using:
 
 ```
 docker-machine ip default
@@ -84,11 +83,20 @@ Only SNMPv2 and SNMPv3 (SHA/AES 256) is enabled by default.
 * **WAARP_SNMP_AUTHPASS**: SNMPv3 auth password. Default=`password`
 * **WAARP_SNMP_PRIVPASS**: SNMPv3 priv password. Default=`password`
 
+### FTP Account
+
+Default ftps account are `fromFTP` and `toFTP`.
+
+* **WAARP_FTPCLIENT_USER**: Host ID. default=`ftp-client`
+* **WAARP_FTPCLIENT_PASSWORD**: FTP Password. default=`password`
+* **WAARP_FTPCLIENT_RETREIVECMD**. Retreive command. default=`NONE`
+* **WAARP_FTPCLIENT_STORECMD**. Store command. default=`NONE`
+
 # Deployment using PostgreSQL
 Database is created by the database container and automatically populated by the application container on first run.
 
 ```bash
-docker run -it -d --name=waarp-r66-pg \
+docker run -it -d --name=waarp-gwftp-pg \
 --restart=always \
 -e POSTGRES_USER=waarp \
 -e POSTGRES_PASSWORD=Ch4ng3M3 \
@@ -98,15 +106,15 @@ postgres
 
 sleep 10
 
-docker run -it -d --name=waarp-r66 \
---link waarp-r66-pg:postgres \
+docker run -it -d --name=waarp-gwftp \
+--link waarp-gwftp-pg:postgres \
 --restart=always \
 -p 6666:6666 \
 -p 6667:6667 \
 -p 8066:8066 \
 -p 8067:8067 \
 -p 8088:8088 \
-fjudith/waarp-r66
+fjudith/waarp-gwftp
 ```
 
 # Docker-Compose
@@ -114,35 +122,34 @@ fjudith/waarp-r66
 You can use docker-compose to automate the above commands if you create a file called `docker-compose.yml` and and write inside the following content:
 
 ```
-waarp-r66-pg:
+waarp-gwftp-pg:
   image: postgres
   restart: always
   environment:
-    POSTGRES_DB: server1-waarp
+    POSTGRES_DB: gwftp1-waarp
     POSTGRES_PASSWORD: Ch4ng3M3
     POSTGRES_USER: waarp
   volumes:
-  - waarp-server1-db:/var/lib/postgresql
-  - waarp-server1-db:/var/log/postgresql
+  - waarp-gwftp1-db:/var/lib/postgresql
+  - waarp-gwftp1-db:/var/log/postgresql
 
-waarp-r66:
-  image: fjudith/waarp-r66
+waarp-gwftp:
+  image: fjudith/waarp-gwftp
   restart: always
   environment:
-    WAARP_APPNAME: server1
+    WAARP_APPNAME: gwftp1
     WAARP_ADMIN_PASSWORD: V3rY1ns3cur3P4ssw0rd
   ports:
-  - 6666:6666/tcp
-  - 6667:6667/tcp
-  - 8066:8066/tcp
-  - 8067:8067/tcp
-  - 8088:8088/tcp
+  - 6621:6621/tcp
+  - 8076:8076/tcp
+  - 8077:8077/tcp
+  - 50001-65534:50001-65534/tcp
   links:
-  - waarp-r66-pg:postgres
+  - waarp-gwftp-pg:postgres
   volumes:
-  - waarp-server1-etc:/etc/waarp
-  - waarp-server1-data:/var/lib/waarp
-  - waarp-server1-log:/var/log/waarp
+  - waarp-gwftp1-etc:/etc/waarp
+  - waarp-gwftp1-data:/var/lib/waarp
+  - waarp-gwftp1-log:/var/log/waarp
 ```
 And run the following command from the same directory of the docker-compose.yml:
 

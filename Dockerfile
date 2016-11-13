@@ -1,4 +1,4 @@
-FROM centos:6
+FROM fjudith/waarp-r66
 
 MAINTAINER Florian JUDITH <florian.judith.b@gmail.com>
 
@@ -6,71 +6,27 @@ ENV WAARP_R66_VERSION=3.0.7
 ENV WAARP_GWFTP_VERSION=3.0.4
 ENV WAARP_PASSWORD_VERSION=3.0.2
 
-ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
-ENV SERVER_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml"
-ENV CLIENT_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/client.xml"
-
 RUN yum update -y
-RUN yum install -y epel-release
 RUN yum install -y \
-		unzip \
-		wget \
-		libxslt \
-		xmlstarlet \
-		initscripts \
-		java-1.8.0-openjdk
+		lsof \
+		supervisor
 
 RUN yum clean all
 
-# Download Waarp rpm package 3.0.4
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-ctl-0.1.1-1.el6.x86_64.rpm -o /tmp/waarp-ctl.rpm
-RUN rpm -iv /tmp/waarp-ctl.rpm
-
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-common-1.0.0-1.el6.noarch.rpm -o /tmp/waarp-common-1.rpm && \
-	rpm -iv /tmp/waarp-common-1.rpm
-
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-common-3.0.4-1.el6.noarch.rpm -o /tmp/waarp-common.rpm && \
-	rpm -iv /tmp/waarp-common.rpm
-
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-client-3.0.4-3.el6.noarch.rpm -o /tmp/waarp-r66-client.rpm && \
-	rpm -iv /tmp/waarp-r66-client.rpm
-
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-server-3.0.4-2.el6.noarch.rpm -o /tmp/waarp-r66-server.rpm && \
-	rpm -iv /tmp/waarp-r66-server.rpm
-
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-gateway-ftp-3.0.2-1.el6.noarch.rpm -o /tmp/waarp-gateway-ftp.rpm && \
-	rpm -iv /tmp/waarp-gateway-ftp.rpm
-
-RUN rm -f /tmp/waarp*.rpm
-
 # Download & deploy Waarp Gateway Ftp patch 3.0.4
 RUN pushd /tmp/ && \
-	curl -O https://dl.waarp.org/dist/waarp-gateway-ftp/3.0/waarp-gateway-ftp-3.0.4.zip && \
-	unzip -x /tmp/waarp-gateway-ftp-3.0.4.zip -d /tmp/ && \
-	cp /tmp/waarp-gateway-ftp-3.0.4/lib/*.jar /usr/share/waarp/r66-lib/ && \
-	rm -rf /tmp/waarp-gateway-ftp-3.0.4 && \
+	curl -O https://dl.waarp.org/dist/waarp-gateway-ftp/3.0/waarp-gateway-ftp-${WAARP_GWFTP_VERSION}.zip && \
+	unzip -x /tmp/waarp-gateway-ftp-${WAARP_GWFTP_VERSION}.zip -d /tmp/ && \
+	cp -r /tmp/waarp-gateway-ftp-${WAARP_GWFTP_VERSION}/admin/* /usr/share/waarp/gwftp-admin/ && \
+	rm -rf /tmp/waarp-gateway-ftp-${WAARP_GWFTP_VERSION} && \
 	popd
 
-# Download & deploy Waarp R66 patch 3.0.6-beta1
-RUN pushd /tmp/ && \
-	curl -O https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-3.0.6.zip && \
-	unzip -x /tmp/waarp-r66-3.0.6.zip -d /tmp/ && \
-	cp /tmp/waarp-r66-3.0.6/lib/*.jar /usr/share/waarp/r66-lib/ && \
-	cp /tmp/waarp-r66-3.0.6/lib/*.jar /usr/share/waarp/gwftp-lib/ && \
-	rm -rf /tmp/waarp-r66-3.0.6 && \
-	popd
-
-# Download & deploy Waarp R66 patch 3.0.7-beta1
-RUN pushd /tmp/ && \
-	curl -O https://discuss.waarp.org/uploads/default/original/1X/ac660f17911ae8388aebb46f963cbdd90e2227f0.zip && \
-	unzip -x /tmp/ac660f17911ae8388aebb46f963cbdd90e2227f0.zip -d /tmp/ && \
-	cp /tmp/waarp-r66-3.0.7-beta1/lib/*.jar /usr/share/waarp/r66-lib/ && \
-	cp /tmp/waarp-r66-3.0.7-beta1/lib/*.jar /usr/share/waarp/gwftp-lib/ && \
-	rm -rf /tmp/waarp-r66-3.0.7-beta1 && \
-	popd
+# Duplicate Waarp library
+RUN mkdir -p /usr/share/waarp/gwftp && \
+	cp -av /usr/share/waarp/r66-lib/* /usr/share/waarp/gwftp-lib/
 
 # Cleanup
-RUN pushd /usr/share/waarp/r66-lib/ && rm -f \
+RUN pushd /usr/share/waarp/gwftp-lib/ && rm -f \
 	commons-compress-1.10.jar commons-compress-1.9.jar \
 	commons-io-2.4.jar commons-net-3.3-ftp.jar h2-1.3.176.jar \
 	httpclient-4.2.5.jar httpcore-4.2.4.jar \
@@ -86,7 +42,7 @@ RUN pushd /usr/share/waarp/r66-lib/ && rm -f \
     netty-all-4.1.0.CR3.jar postgresql-9.4-1201-jdbc4.jar \
     postgresql-9.4-1206-jdbc4.jar slf4j-api-1.7.12.jar \
     snmp4j-2.3.1.jar snmp4j-agent-2.2.2.jar \
-    WaarpAdministrator-3.0.0.jar WaarpCommon-3.0.4.jar \
+    WaarpAdministrator-3.0.0.jar WaarpCommon-3.0.4.jar WaarpGatewayFtp-3.0.2.jar \
     WaarpCommon-3.0.6.jar WaarpDigest-3.0.0.jar \
     WaarpExec-3.0.0.jar WaarpFtp-Core-3.0.2.jar \
     WaarpFtp-Filesystem-3.0.2.jar WaarpGatewayKernel-3.0.3.jar \
@@ -96,20 +52,26 @@ RUN pushd /usr/share/waarp/r66-lib/ && rm -f \
     xml-apis-1.0.b2.jar xml-apis.jar XMLEditor-2.2.jar xmleditor.jar && \
     popd
 
-# Waap Internal Name
-ENV WAARP_APPNAME="server1"
+# Waarp Internal Name
+ENV WAARP_APPNAME="gwftp1"
 ENV WAARP_DATABASE_LANGUAGE="en"
 ENV WAARP_ADMIN_PASSWORD="password"
+
+# Waarp Ftp CLient
+ENV WAARP_FTPCLIENT_USER="ftp-client"
+ENV WAARP_FTPCLIENT_PASSWORD="password"
+ENV WAARP_FTPCLIENT_RETREIVECMD="NONE"
+ENV WAARP_FTPCLIENT_STORECMD="NONE"
 
 # Waarp Database configuration
 ENV WAARP_DATABASE_TYPE="h2"
 ENV WAARP_DATABASE_NAME="${WAARP_APPNAME}_waarp"
-ENV WAARP_DATABASE_USER="waarp"
-ENV WAARP_DATABASE_PASSWORD="waarp"
+ENV WAARP_DATABASE_USER="gwftp"
+ENV WAARP_DATABASE_PASSWORD="gwftp"
 ENV WAARP_DATABASE_URL="jdbc:${WAARP_DATABASE_TYPE}:/var/lib/waarp/${WAARP_APPNAME}/db/${WAARP_DATABASE_NAME};MODE=ORACLE;AUTO_SERVER=TRUE"
 
 # SSL
-ENV WAARP_SSL_DNAME="CN=${WAARP_APPNAME}\, OU=xfer\, O=MyCompany\, L=Paris\, S=Paris\, C=FR"
+ENV WAARP_SSL_DNAME="CN=${WAARP_APPNAME}, OU=xfer, O=MyCompany, L=Paris, S=Paris, C=FR"
 ENV WAARP_KEYSIZE="2048"
 ENV WAARP_KEYALG="RSA"
 ENV WAARP_SIGALG="SHA256withRSA"
@@ -129,23 +91,34 @@ ADD assets/bin/ /usr/bin/
 ADD assets/certs/* /etc/waarp/certs/
 ADD assets/conf.d/ /etc/waarp/conf.d/
 
+# Waarp log
+ENV GWFTP_CLASSPATH="/usr/share/waarp/gwftp-lib/WaarpGatewayFtp-${WAARP_GWFTP_VERSION}.jar:/usr/share/waarp/gwftp-lib/*"
+ENV SERVER_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/gwftp.xml"
+ENV CLIENT_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/client.xml"
+ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-gwftp.xml "
+ENV LOGCLIENT=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-client.xml "
+
+COPY supervisord.conf /etc/supervisord.conf
 COPY assets/init-functions /usr/share/waarp/
 COPY assets/*.sh /usr/share/waarp/
 RUN chmod +x /usr/share/waarp/* && \
-	/usr/share/waarp/init-commands.sh
+	. /usr/share/waarp/init-commands.sh
 
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
+RUN mkdir -p /var/lib/waarp/gwftp/ftp
 
-# Waarp ports
-EXPOSE 6666 6667
+# GwFTP ports
+EXPOSE 6621
 
 # HTTP Admin ports
-EXPOSE 8066 8067
+EXPOSE 8076 8077
 
-# REST API ports
-EXPOSE 8088
+# GwFTP PASV ports
+EXPOSE 50001-65534
 
 WORKDIR /usr/share/waarp
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
+# ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["bash"]
