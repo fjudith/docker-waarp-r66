@@ -1,3 +1,5 @@
+#!/bin/sh
+
 JAVA_HOME=$(readlink -f $(dirname $(readlink -f $(which java)))/..)
 JAVA_OPTS1="-server"
 JAVA_OPTS2="-Xms256m -Xmx512m"
@@ -24,10 +26,10 @@ CONFDIR=${CONFDIR:-/etc/waarp/conf.d/$R66_INST}
 PIDFILE=/var/lib/waarp/$R66_INST/r66server.pid
 FTPPIDFILE=/var/lib/waarp/$R66_INST/gwftp.pid
 
-LOGSERVER=" -Dlogback.configurationFile=${CONFDIR}/logback-gwftp.xml "
+LOGSERVER=" -Dlogback.configurationFile=${CONFDIR}/logback-server.xml "
 LOGCLIENT=" -Dlogback.configurationFile=${CONFDIR}/logback-client.xml "
 
-GWFTP_CLASSPATH="/usr/share/waarp/gwftp-lib/WaarpGatewayFtp-3.0.4.jar:/usr/share/waarp/gwftp-lib/*"
+R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
 
-JAVARUNCLIENT="${JAVA_RUN} ${JAVA_OPTS2} -cp ${GWFTP_CLASSPATH} ${LOGCLIENT} "
-JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${GWFTP_CLASSPATH} ${LOGSERVER} "
+JAVARUNCLIENT="${JAVA_RUN} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGCLIENT} "
+JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGSERVER} "

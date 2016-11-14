@@ -9,13 +9,10 @@ export JAVA_RUN="${JAVA_HOME}/bin/java"
 export PATH=${JAVA_HOME}/bin:$PATH
 
 export CONFDIR=${CONFDIR:-/etc/waarp/conf.d/$WAARP_APPNAME}
-export PIDFILE=/var/lib/waarp/${WAARP_APPNAME}/gwftp.pid
+export PIDFILE=/var/lib/waarp/${WAARP_APPNAME}/r66server.pid
 
-export LOGSERVER=" -Dlogback.configurationFile=${CONFDIR}/logback-gwftp.xml "
-export LOGCLIENT=" -Dlogback.configurationFile=${CONFDIR}/logback-client.xml "
-
-export JAVARUNCLIENT="${JAVA_RUN} ${JAVA_OPTS2} -cp ${GWFTP_CLASSPATH} ${LOGCLIENT} "
-export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${GWFTP_CLASSPATH} ${LOGSERVER} "
+export JAVARUNCLIENT="${JAVA_RUN} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGCLIENT} "
+export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGSERVER} "
 
 echo --------------------------------------------------
 echo 'Initializing Waarp command line tools'
@@ -26,13 +23,12 @@ echo --------------------------------------------------
 mkdir -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
 cp -vn /etc/waarp/conf.d/template/*.xml /etc/waarp/conf.d/${WAARP_APPNAME}/
 
-
 echo --------------------------------------------------
 echo 'Initializing Waarp password file'
 echo --------------------------------------------------
 WAARP_CRYPTED_PASSWORD=$(
-    java -cp "${GWFTP_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
-    -des -ko "/etc/waarp/certs/gwftp-cryptokey.des" \
+    java -cp "${R66_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
+    -des -ko "/etc/waarp/certs/cryptokey.des" \
     -po "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" 2>&1 | \
     grep "CryptedPwd:" | sed 's#CryptedPwd\:\s##g' \
 )
@@ -40,8 +36,8 @@ WAARP_CRYPTED_PASSWORD=$(
 xmlstarlet ed -P -S -L \
 -u "/config/identity/hostid" -v "${WAARP_APPNAME}" \
 -u "/config/identity/sslhostid" -v "${WAARP_APPNAME}-ssl" \
--u "/config/identity/cryptokey" -v "/etc/waarp/certs/gwftp-cryptokey.des" \
--u "/config/identity/authentfile" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/GwFTP-authent.xml" \
+-u "/config/identity/cryptokey" -v "/etc/waarp/certs/cryptokey.des" \
+-u "/config/identity/authentfile" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/OpenR66-authent.xml" \
 -u "/config/server/serverpasswd" -v "${WAARP_CRYPTED_PASSWORD}" \
 ${SERVER_CONFIG}
 
@@ -75,12 +71,12 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_server.jks" ]; then
     -sigalg ${WAARP_SIGALG} -validity "${WAARP_KEYVAL}" \
     -alias "${WAARP_APPNAME}_server" \
     -dname "${WAARP_SSL_DNAME}" \
-    -keystore "/etc/waarp/certs/${WAARP_APPNAME}_gwftp.jks" \
+    -keystore "/etc/waarp/certs/${WAARP_APPNAME}_server.jks" \
     -storepass "${WAARP_KEYSTOREPASS}" \
     -keypass "${WAARP_KEYPASS}"
 
     xmlstarlet ed -P -S -L \
-    -u "/config/ssl/keypath" -v "/etc/waarp/certs/${WAARP_APPNAME}_gwftp.jks" \
+    -u "/config/ssl/keypath" -v "/etc/waarp/certs/${WAARP_APPNAME}_server.jks" \
     -u "/config/ssl/keystorepass" -v ${WAARP_KEYSTOREPASS}  \
     -u "/config/ssl/keypass" -v ${WAARP_KEYPASS} \
     ${SERVER_CONFIG}
@@ -119,25 +115,23 @@ xmlstarlet ed -P -S -L \
 echo --------------------------------------------------
 echo 'Initializing Waarp authentication XML file'
 echo --------------------------------------------------
-WAARP_CRYPTED_PASSWORD=$(
-    java -cp "${GWFTP_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_FTPCLIENT_PASSWORD}" \
-    -des -ki "/etc/waarp/certs/gwftp-cryptokey.des" \
-    -po "/etc/waarp/certs/ftp-client-passwd.ggp" 2>&1 | \
-    grep "CryptedPwd:" | sed 's#CryptedPwd\:\s##g' \
-)
-
-if [ ! -f "/etc/waarp/conf.d/${WAARP_APPNAME}/GwFTP-authent.xml" ]; then
+if [ ! -f "/etc/waarp/conf.d/${WAARP_APPNAME}/OpenR66-authent.xml" ]; then
     echo '<?xml version="1.0" encoding="UTF-8"?><authent xmlns:x0="http://www.w3.org/2001/XMLSchema"></authent>' | xmlstarlet ed \
     -s "/authent" -t elem -n entry -v "" \
-    -s "/authent/entry" -t elem -n user -v "${WAARP_FTPCLIENT_USER}" \
-    -s "/authent/entry" -t elem -n passwd -v "${WAARP_CRYPTED_PASSWORD}" \
-    -s "/authent/entry" -t elem -n account -v "toFTP" \
-    -s "/authent/entry" -t elem -n account -v "fromFTP" \
+    -s "/authent/entry" -t elem -n hostid -v ${WAARP_APPNAME} \
+    -s "/authent/entry" -t elem -n address -v "127.0.0.1" \
+    -s "/authent/entry" -t elem -n port -v "6666" \
+    -s "/authent/entry" -t elem -n isssl -v "false" \
     -s "/authent/entry" -t elem -n admin -v "false" \
-    -s "/authent/entry" -t elem -n retreivecmd -v "${WAARP_FTPCLIENT_RETREIVECMD}" \
-    -s "/authent/entry" -t elem -n storecmd -v "${WAARP_FTPCLIENT_STORECMD}" \
-    -s "/authent/entry" -t elem -n storedelay -v "30000" \
-    > /etc/waarp/conf.d/${WAARP_APPNAME}/GwFTP-authent.xml
+    -s "/authent/entry" -t elem -n keyfile -v "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" \
+    -s "/authent" -t elem -n entry -v "" \
+    -s "/authent/entry" -t elem -n hostid -v "${WAARP_APPNAME}-ssl" \
+    -s "/authent/entry" -t elem -n address -v "127.0.0.1" \
+    -s "/authent/entry" -t elem -n port -v "6667" \
+    -s "/authent/entry" -t elem -n isssl -v "true" \
+    -s "/authent/entry" -t elem -n admin -v "true" \
+    -s "/authent/entry" -t elem -n keyfile -v "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" \
+    > /etc/waarp/conf.d/${WAARP_APPNAME}/OpenR66-authent.xml
 fi
 
 echo --------------------------------------------------
@@ -194,12 +188,12 @@ xmlstarlet ed -P -S -L \
 -u "/config/db/dbpasswd" -v "${WAARP_DATABASE_PASSWORD}" \
 ${SERVER_CONFIG}
 
-${GWFTPINIT} -initdb
-# ${GWFTPINIT} -auth /etc/waarp/conf.d/${WAARP_APPNAME}/GwFTP-authent.xml
-${GWFTPINIT} -upgradedb
+${R66INIT} -initdb
+${R66INIT} -auth /etc/waarp/conf.d/${WAARP_APPNAME}/OpenR66-authent.xml
+${R66INIT} -upgradedb
 
 echo --------------------------------------------------
 echo 'Waarp init process complete; ready for start up.'
 echo --------------------------------------------------
 
-/usr/bin/supervisord -c /etc/supervisord.conf -n
+/usr/bin/waarp-r66server ${WAARP_APPNAME} start
