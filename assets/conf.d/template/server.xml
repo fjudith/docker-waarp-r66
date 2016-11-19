@@ -36,7 +36,7 @@
     <trustuseclientauthenticate>True</trustuseclientauthenticate>
   </ssl>
   <directory>
-    <serverhome>/var/lib/waarp/server1</serverhome>
+    <serverhome>/var/lib/waarp/server</serverhome>
     <in>xfer/in</in>
     <out>xfer/out</out>
     <arch>xfer/arch</arch>
@@ -83,7 +83,7 @@
   </limit>
   <db>
     <dbdriver>h2</dbdriver>
-    <dbserver>jdbc:h2:/var/lib/waarp/server1/db/waarp;MODE=ORACLE;AUTO_SERVER=TRUE</dbserver>
+    <dbserver>jdbc:h2:/var/lib/waarp/server/db/waarp;MODE=ORACLE;AUTO_SERVER=TRUE</dbserver>
     <dbuser>waarp</dbuser>
     <dbpasswd>waarp</dbpasswd>
   </db>

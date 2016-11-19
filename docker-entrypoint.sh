@@ -14,39 +14,100 @@ export PIDFILE=/var/lib/waarp/${WAARP_APPNAME}/r66server.pid
 export JAVARUNCLIENT="${JAVA_RUN} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGCLIENT} "
 export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGSERVER} "
 
-echo --------------------------------------------------
-echo 'Initializing Waarp command line tools'
-echo 'Deploying XML configuration files if required'
-echo --------------------------------------------------
+
+# Initializing Command Line Tools.
+# The script contains command line tools
+# to interact with Waarp engine.
+# e.g initialize database, submit/list transfer requests.
+# --------------------------------------------------
+echo $(date --rfc-3339=seconds) 'Initializing Waarp command line tools'
+
 . /usr/share/waarp/init-commands.sh
 
-mkdir -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
-cp -vn /etc/waarp/conf.d/template/*.xml /etc/waarp/conf.d/${WAARP_APPNAME}/
 
-echo --------------------------------------------------
-echo 'Initializing Waarp password file'
-echo --------------------------------------------------
-WAARP_CRYPTED_PASSWORD=$(
-    java -cp "${R66_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
-    -des -ko "/etc/waarp/certs/cryptokey.des" \
-    -po "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" 2>&1 | \
-    grep "CryptedPwd:" | sed 's#CryptedPwd\:\s##g' \
-)
+# Deploying XML configuration files.
+# Copy the configuration from Template,
+# if not already customized
+# --------------------------------------------------
+echo $(date --rfc-3339=seconds) 'Deploying XML configuration files if required'
+
+if [ ! -f ${SERVER_CONFIG} ]; then
+	mkdir -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
+	cp -vn /etc/waarp/conf.d/template/*.xml /etc/waarp/conf.d/${WAARP_APPNAME}/
+fi
+
+
+# Initializing Directories.
+# --------------------------------------------------
+echo $(date --rfc-3339=seconds) 'Initializing Directories.'
+
+mkdir /var/lib/${WAARP_APPNAME}
+
+xmlstarlet ed -P -S -L \
+-u "/config/directory/serverhome" -v "/var/lib/${WAARP_APPNAME}" \
+${SERVER_CONFIG}
+
+
+# Initializing Waarp Password file.
+# Update password if key already exists.
+# --------------------------------------------------
+if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" ]; then
+	echo $(date --rfc-3339=seconds) 'Initializing Waarp password file'
+	WAARP_CRYPTED_PASSWORD=$(
+    	java -cp "${R66_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
+	    -des -ko "/etc/waarp/certs/cryptokey.des" \
+	    -po "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" 2>&1 | \
+	    grep "CryptedPwd:" | sed 's#CryptedPwd\:\s##g' \
+	)
+else
+	echo $(date --rfc-3339=seconds) 'Updating Waarp password file'
+	WAARP_CRYPTED_PASSWORD=$(
+    	java -cp "${R66_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
+	    -des -ki "/etc/waarp/certs/cryptokey.des" \
+	    -po "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" 2>&1 | \
+	    grep "CryptedPwd:" | sed 's#CryptedPwd\:\s##g' \
+	)
+fi
 
 xmlstarlet ed -P -S -L \
 -u "/config/identity/hostid" -v "${WAARP_APPNAME}" \
 -u "/config/identity/sslhostid" -v "${WAARP_APPNAME}-ssl" \
 -u "/config/identity/cryptokey" -v "/etc/waarp/certs/cryptokey.des" \
--u "/config/identity/authentfile" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/OpenR66-authent.xml" \
+-u "/config/identity/authentfile" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml" \
 -u "/config/server/serverpasswd" -v "${WAARP_CRYPTED_PASSWORD}" \
 ${SERVER_CONFIG}
 
-echo --------------------------------------------------
-echo 'Initializing Waarp SSL'
-echo --------------------------------------------------
-# Admin     --------------------------------------------------
+# Initializing Waarp authentication XML file.
+# --------------------------------------------------
+echo $(date --rfc-3339=seconds) 'Initializing Waarp authentication XML file'
+
+if [ ! -f "/etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml" ]; then
+    echo '<?xml version="1.0" encoding="UTF-8"?><authent xmlns:x0="http://www.w3.org/2001/XMLSchema"></authent>' | xmlstarlet ed \
+    -s "/authent" -t elem -n entry -v "" \
+    -s "/authent/entry" -t elem -n hostid -v ${WAARP_APPNAME} \
+    -s "/authent/entry" -t elem -n address -v "127.0.0.1" \
+    -s "/authent/entry" -t elem -n port -v "6666" \
+    -s "/authent/entry" -t elem -n isssl -v "false" \
+    -s "/authent/entry" -t elem -n admin -v "false" \
+    -s "/authent/entry" -t elem -n keyfile -v "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" \
+    -s "/authent" -t elem -n entry -v "" \
+    -s "/authent/entry" -t elem -n hostid -v "${WAARP_APPNAME}-ssl" \
+    -s "/authent/entry" -t elem -n address -v "127.0.0.1" \
+    -s "/authent/entry" -t elem -n port -v "6667" \
+    -s "/authent/entry" -t elem -n isssl -v "true" \
+    -s "/authent/entry" -t elem -n admin -v "true" \
+    -s "/authent/entry" -t elem -n keyfile -v "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" \
+    > /etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml
+fi
+
+
+# Initializing Waarp SSL
+# --------------------------------------------------
+echo $(date --rfc-3339=seconds) 'Initializing Waarp SSL'
+
+# Admin
 if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_admkey.jks" ]; then
-    echo "Generating admin key"
+    echo $(date --rfc-3339=seconds) "Generating admin key"
     
     keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEYALG} \
     -sigalg ${WAARP_SIGALG} -validity "${WAARP_KEYVAL}" \
@@ -63,9 +124,9 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_admkey.jks" ]; then
     ${SERVER_CONFIG}
 fi
 
-# Server    --------------------------------------------------
+# Server
 if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_server.jks" ]; then
-    echo "Generating server key"
+    echo $(date --rfc-3339=seconds) "Generating server key"
     
     keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEYALG} \
     -sigalg ${WAARP_SIGALG} -validity "${WAARP_KEYVAL}" \
@@ -82,9 +143,9 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_server.jks" ]; then
     ${SERVER_CONFIG}
 fi
 
-# Trust    --------------------------------------------------
+# Trust
 if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_trust.jks" ]; then
-    echo "Generating trust key"
+    echo $(date --rfc-3339=seconds) "Generating trust key"
     
     keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEYALG} \
     -sigalg ${WAARP_SIGALG} -validity "${WAARP_KEYVAL}" \
@@ -100,9 +161,10 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_trust.jks" ]; then
     ${SERVER_CONFIG}
 fi
 
-echo --------------------------------------------------
-echo 'Initializing Waarp SNMP file'
-echo --------------------------------------------------
+
+# Initializing Waarp SNMP file
+# --------------------------------------------------
+echo $(date --rfc-3339=seconds) 'Initializing Waarp SNMP file'
 xmlstarlet ed -P -S -L \
 -u "/config/server/snmpconfig" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/snmpconfig.xml" \
 ${SERVER_CONFIG}
@@ -112,35 +174,14 @@ xmlstarlet ed -P -S -L \
 -u "/snmpconfig/securities/security/securityprivpass" -v ${WAARP_SNMP_PRIVPASS} \
 /etc/waarp/conf.d/${WAARP_APPNAME}/snmpconfig.xml
 
-echo --------------------------------------------------
-echo 'Initializing Waarp authentication XML file'
-echo --------------------------------------------------
-if [ ! -f "/etc/waarp/conf.d/${WAARP_APPNAME}/OpenR66-authent.xml" ]; then
-    echo '<?xml version="1.0" encoding="UTF-8"?><authent xmlns:x0="http://www.w3.org/2001/XMLSchema"></authent>' | xmlstarlet ed \
-    -s "/authent" -t elem -n entry -v "" \
-    -s "/authent/entry" -t elem -n hostid -v ${WAARP_APPNAME} \
-    -s "/authent/entry" -t elem -n address -v "127.0.0.1" \
-    -s "/authent/entry" -t elem -n port -v "6666" \
-    -s "/authent/entry" -t elem -n isssl -v "false" \
-    -s "/authent/entry" -t elem -n admin -v "false" \
-    -s "/authent/entry" -t elem -n keyfile -v "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" \
-    -s "/authent" -t elem -n entry -v "" \
-    -s "/authent/entry" -t elem -n hostid -v "${WAARP_APPNAME}-ssl" \
-    -s "/authent/entry" -t elem -n address -v "127.0.0.1" \
-    -s "/authent/entry" -t elem -n port -v "6667" \
-    -s "/authent/entry" -t elem -n isssl -v "true" \
-    -s "/authent/entry" -t elem -n admin -v "true" \
-    -s "/authent/entry" -t elem -n keyfile -v "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" \
-    > /etc/waarp/conf.d/${WAARP_APPNAME}/OpenR66-authent.xml
-fi
 
-echo --------------------------------------------------
-echo 'Initializing Waarp Database'
-echo --------------------------------------------------
+# Initializing Waarp Database
+# --------------------------------------------------
+echo $(date --rfc-3339=seconds) 'Initializing Waarp Database'
 if [ -z ${MYSQL_ENV_GOSU_VERSION+x} ]; then
-    echo "Database engine is not MySQL/MariaDB"
+    echo $(date --rfc-3339=seconds) "Database engine is not MySQL/MariaDB"
 else
-    echo "Database engine is MySQL/MariaDB"
+    echo $(date --rfc-3339=seconds) "Database engine is MySQL/MariaDB"
     : ${WAARP_DATABASE_TYPE='mysql'}
     : ${WAARP_DATABASE_USER:=${MYSQL_ENV_MYSQL_USER:-root}}
     if [ "$WAARP_DATABASE_USER" = 'root' ]; then
@@ -160,9 +201,9 @@ else
 fi
 
 if [ -z ${POSTGRES_ENV_GOSU_VERSION+x} ]; then
-    echo "Database engine is not PostgreSQL"
+    echo $(date --rfc-3339=seconds) "Database engine is not PostgreSQL"
 else
-    echo "Database engine is PostgreSQL"
+    echo $(date --rfc-3339=seconds) "Database engine is PostgreSQL"
     : ${WAARP_DATABASE_TYPE='postgresql'}
     : ${WAARP_DATABASE_USER:=${POSTGRES_ENV_POSTGRES_USER:-root}}
     if [ "$WAARP_DATABASE_USER" = 'postgres' ]; then
@@ -188,12 +229,15 @@ xmlstarlet ed -P -S -L \
 -u "/config/db/dbpasswd" -v "${WAARP_DATABASE_PASSWORD}" \
 ${SERVER_CONFIG}
 
+
+# Populating Waarp Database
+# --------------------------------------------------
 ${R66INIT} -initdb
-${R66INIT} -auth /etc/waarp/conf.d/${WAARP_APPNAME}/OpenR66-authent.xml
+${R66INIT} -auth /etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml
 ${R66INIT} -upgradedb
 
-echo --------------------------------------------------
-echo 'Waarp init process complete; ready for start up.'
-echo --------------------------------------------------
+echo $(date --rfc-3339=seconds) --------------------------------------------------
+echo $(date --rfc-3339=seconds) 'Waarp init process completed; ready for start up.'
+echo $(date --rfc-3339=seconds) --------------------------------------------------
 
 /usr/bin/waarp-r66server ${WAARP_APPNAME} start
