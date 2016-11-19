@@ -34,18 +34,7 @@ RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-client-3.0.4-3.el6.noarch.rp
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-server-3.0.4-2.el6.noarch.rpm -o /tmp/waarp-r66-server.rpm && \
 	rpm -iv /tmp/waarp-r66-server.rpm
 
-#RUN curl https://dl.waarp.org/repos/rhel6/waarp-gateway-ftp-3.0.2-1.el6.noarch.rpm -o /tmp/waarp-gateway-ftp.rpm && \
-#	rpm -iv /tmp/waarp-gateway-ftp.rpm
-
 RUN rm -f /tmp/waarp*.rpm
-
-# Download & deploy Waarp Gateway Ftp patch 3.0.4
-RUN pushd /tmp/ && \
-	curl -O https://dl.waarp.org/dist/waarp-gateway-ftp/3.0/waarp-gateway-ftp-3.0.4.zip && \
-	unzip -x /tmp/waarp-gateway-ftp-3.0.4.zip -d /tmp/ && \
-	cp /tmp/waarp-gateway-ftp-3.0.4/lib/*.jar /usr/share/waarp/r66-lib/ && \
-	rm -rf /tmp/waarp-gateway-ftp-3.0.4 && \
-	popd
 
 # Download & deploy Waarp R66 patch 3.0.6-beta1
 RUN pushd /tmp/ && \
