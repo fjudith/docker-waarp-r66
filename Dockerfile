@@ -60,6 +60,7 @@ RUN pushd /tmp/ && \
 	curl -O https://discuss.waarp.org/uploads/default/original/1X/ac660f17911ae8388aebb46f963cbdd90e2227f0.zip && \
 	unzip -x /tmp/ac660f17911ae8388aebb46f963cbdd90e2227f0.zip -d /tmp/ && \
 	cp /tmp/waarp-r66-3.0.7-beta1/lib/*.jar /usr/share/waarp/r66-lib/ && \
+	cp -rf /tmp/waarp-r66-3.0.7-beta1/httpadmin/* /usr/share/waarp/r66-admin/ && \
 	rm -rf /tmp/waarp-r66-3.0.7-beta1 && \
 	popd
 

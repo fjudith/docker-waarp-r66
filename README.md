@@ -12,6 +12,7 @@ Waarp R66 : software for massive file transfer with monitoring, file watcher and
 * [X] Waarp Gateway FTP support [waarp-gwftp](https://hub.docker.com/r/fjudith/waarp-gwftp/)
 * [X] REST API support
 * [X] SNMP support
+* [X] Responsive HTTP admin
 
 # Quick start
 Run the Waarp-R66 image
