@@ -34,8 +34,8 @@ RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-client-3.0.4-3.el6.noarch.rp
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-server-3.0.4-2.el6.noarch.rpm -o /tmp/waarp-r66-server.rpm && \
 	rpm -iv /tmp/waarp-r66-server.rpm
 
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-gateway-ftp-3.0.2-1.el6.noarch.rpm -o /tmp/waarp-gateway-ftp.rpm && \
-	rpm -iv /tmp/waarp-gateway-ftp.rpm
+#RUN curl https://dl.waarp.org/repos/rhel6/waarp-gateway-ftp-3.0.2-1.el6.noarch.rpm -o /tmp/waarp-gateway-ftp.rpm && \
+#	rpm -iv /tmp/waarp-gateway-ftp.rpm
 
 RUN rm -f /tmp/waarp*.rpm
 
@@ -125,7 +125,6 @@ ENV CLIENT_CONFIG=${SERVER_CONFIG}
 ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-server.xml "
 ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-client.xml "
 
-
 # Waarp binaries and configuration files
 ADD assets/bin/ /usr/bin/
 ADD assets/certs/* /etc/waarp/certs/
@@ -134,7 +133,8 @@ ADD assets/conf.d/ /etc/waarp/conf.d/
 COPY assets/init-functions /usr/share/waarp/
 COPY assets/*.sh /usr/share/waarp/
 RUN chmod +x /usr/share/waarp/* && \
-	/usr/share/waarp/init-commands.sh
+	echo "export TERM=xterm-256color" >> ~/.bashrc && \
+	echo ". /usr/share/waarp/init-commands.sh" >> ~/.bashrc
 
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh

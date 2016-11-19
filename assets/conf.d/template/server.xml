@@ -1,7 +1,7 @@
 <config>
   <identity>
-    <hostid></hostid>
-    <sslhostid></sslhostid>
+    <hostid>server</hostid>
+    <sslhostid>server-ssl</sslhostid>
     <cryptokey></cryptokey>
     <authentfile>/etc/waarp/conf.d/server1/OpenR66-authent.xml</authentfile>
   </identity>
@@ -87,7 +87,8 @@
     <dbuser>waarp</dbuser>
     <dbpasswd>waarp</dbpasswd>
   </db>
-    <business>
-        <businessid>fw-client</businessid>
-    </business>
+  <business>
+    <businessid>server</businessid>
+    <businessid>server-ssl</businessid>
+  </business>
 </config>

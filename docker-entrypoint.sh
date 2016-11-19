@@ -10,10 +10,6 @@ export PATH=${JAVA_HOME}/bin:$PATH
 
 export CONFDIR=${CONFDIR:-/etc/waarp/conf.d/$WAARP_APPNAME}
 export PIDFILE=/var/lib/waarp/${WAARP_APPNAME}/r66server.pid
-export SERVER_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml"
-export CLIENT_CONFIG=${SERVER_CONFIG}
-export LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-server.xml "
-export LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-client.xml "
 
 export JAVARUNCLIENT="${JAVA_RUN} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGCLIENT} "
 export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGSERVER} "
