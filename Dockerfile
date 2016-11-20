@@ -68,7 +68,7 @@ RUN pushd /usr/share/waarp/r66-lib/ && rm -f \
     mariadb-java-client-1.3.4.jar mysql-connector-java-5.1.35.jar \
     mysql-connector-java-5.1.36.jar netty-all-4.1.0.Beta5.jar \
     netty-all-4.1.0.CR3.jar postgresql-9.4-1201-jdbc4.jar \
-    postgresql-9.4-1206-jdbc4.jar slf4j-api-1.7.12.jar \
+    slf4j-api-1.7.12.jar \
     snmp4j-2.3.1.jar snmp4j-agent-2.2.2.jar \
     WaarpAdministrator-3.0.0.jar WaarpCommon-3.0.4.jar \
     WaarpCommon-3.0.6.jar WaarpDigest-3.0.0.jar \

@@ -178,18 +178,21 @@ xmlstarlet ed -P -S -L \
 # Initializing Waarp Database
 # --------------------------------------------------
 echo $(date --rfc-3339=seconds) 'Initializing Waarp Database'
-if [ -z ${MYSQL_ENV_GOSU_VERSION+x} ]; then
+if [ -z ${MYSQL_ENV_GOSU_VERSION} ]; then
     echo $(date --rfc-3339=seconds) "Database engine is not MySQL/MariaDB"
 else
     echo $(date --rfc-3339=seconds) "Database engine is MySQL/MariaDB"
-    : ${WAARP_DATABASE_TYPE='mysql'}
-    : ${WAARP_DATABASE_USER:=${MYSQL_ENV_MYSQL_USER:-root}}
+    
+    WAARP_DATABASE_TYPE='mysql'
+    WAARP_DATABASE_USER:=${MYSQL_ENV_MYSQL_USER:-root}
+
     if [ "$WAARP_DATABASE_USER" = 'root' ]; then
-        : ${WAARP_DATABASE_PASSWORD:=$MYSQL_ENV_MYSQL_ROOT_PASSWORD}
+    	WAARP_DATABASE_PASSWORD:=$MYSQL_ENV_MYSQL_ROOT_PASSWORD
     fi
-    : ${WAARP_DATABASE_PASSWORD:=$MYSQL_ENV_MYSQL_PASSWORD}
-    : ${WAARP_DATABASE_NAME:=${MYSQL_ENV_MYSQL_DATABASE:-squashtm}}
-    : ${WAARP_DATABASE_URL="jdbc:mysql://mysql:3306/$WAARP_DATABASE_NAME"}
+    
+    WAARP_DATABASE_PASSWORD=$MYSQL_ENV_MYSQL_PASSWORD
+    WAARP_DATABASE_NAME=${MYSQL_ENV_MYSQL_DATABASE:-waarp}
+    WAARP_DATABASE_URL="jdbc:mysql://mysql:3306/$WAARP_DATABASE_NAME"
 
     if [ -z "$WAARP_DATABASE_PASSWORD" ]; then
         echo >&2 'error: missing required WAARP_DATABASE_PASSWORD environment variable'
@@ -200,18 +203,21 @@ else
     fi
 fi
 
-if [ -z ${POSTGRES_ENV_GOSU_VERSION+x} ]; then
+if [ -z ${POSTGRES_ENV_GOSU_VERSION} ]; then
     echo $(date --rfc-3339=seconds) "Database engine is not PostgreSQL"
 else
     echo $(date --rfc-3339=seconds) "Database engine is PostgreSQL"
-    : ${WAARP_DATABASE_TYPE='postgresql'}
-    : ${WAARP_DATABASE_USER:=${POSTGRES_ENV_POSTGRES_USER:-root}}
+   
+    WAARP_DATABASE_TYPE='postgresql'
+    WAARP_DATABASE_USER:=${POSTGRES_ENV_POSTGRES_USER:-root}
+
     if [ "$WAARP_DATABASE_USER" = 'postgres' ]; then
-        : ${WAARP_DATABASE_PASSWORD:='postgres' }
+        WAARP_DATABASE_PASSWORD:='postgres'
     fi
-    : ${WAARP_DATABASE_PASSWORD:=$POSTGRES_ENV_POSTGRES_PASSWORD}
-    : ${WAARP_DATABASE_NAME:=${POSTGRES_ENV_POSTGRES_DB:-squashtm}}
-    : ${WAARP_DATABASE_URL="jdbc:postgresql://postgres:5432/$WAARP_DATABASE_NAME"}
+    
+    WAARP_DATABASE_PASSWORD=$POSTGRES_ENV_POSTGRES_PASSWORD
+    WAARP_DATABASE_NAME=${POSTGRES_ENV_POSTGRES_DB:-waarp}
+    WAARP_DATABASE_URL="jdbc:postgresql://postgres:5432/$WAARP_DATABASE_NAME"
 
     if [ -z "$WAARP_DATABASE_PASSWORD" ]; then
         echo >&2 'error: missing required WAARP_DATABASE_PASSWORD environment variable'
