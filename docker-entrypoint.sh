@@ -165,6 +165,7 @@ fi
 # Initializing Waarp SNMP file
 # --------------------------------------------------
 echo $(date --rfc-3339=seconds) 'Initializing Waarp SNMP file'
+
 xmlstarlet ed -P -S -L \
 -u "/config/server/snmpconfig" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/snmpconfig.xml" \
 ${SERVER_CONFIG}
