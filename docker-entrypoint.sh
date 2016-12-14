@@ -43,9 +43,15 @@ echo $(date --rfc-3339=seconds) 'Initializing Directories.'
 
 mkdir /var/lib/waarp/${WAARP_APPNAME}
 
+# Server
 xmlstarlet ed -P -S -L \
 -u "/config/directory/serverhome" -v "/var/lib/waarp/${WAARP_APPNAME}" \
 ${SERVER_CONFIG}
+
+# Client
+xmlstarlet ed -P -S -L \
+-u "/config/directory/serverhome" -v "/var/lib/waarp/${WAARP_APPNAME}" \
+${CLIENT_CONFIG}
 
 
 # Initializing Waarp Password file.
@@ -61,7 +67,7 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" ]; then
 	)
 else
 	echo $(date --rfc-3339=seconds) 'Updating Waarp password file'
-	WAARP_CRYPTED_PASSWORD=$(
+	WAARP_CRYPTED_PASSWORD=$(<
     	java -cp "${R66_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
 	    -des -ki "/etc/waarp/certs/cryptokey.des" \
 	    -po "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" 2>&1 | \
@@ -76,6 +82,14 @@ xmlstarlet ed -P -S -L \
 -u "/config/identity/authentfile" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml" \
 -u "/config/server/serverpasswd" -v "${WAARP_CRYPTED_PASSWORD}" \
 ${SERVER_CONFIG}
+
+xmlstarlet ed -P -S -L \
+-u "/config/identity/hostid" -v "${WAARP_APPNAME}" \
+-u "/config/identity/sslhostid" -v "${WAARP_APPNAME}-ssl" \
+-u "/config/identity/cryptokey" -v "/etc/waarp/certs/cryptokey.des" \
+-u "/config/identity/authentfile" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml" \
+-u "/config/server/serverpasswd" -v "${WAARP_CRYPTED_PASSWORD}" \
+${CLIENT_CONFIG}
 
 # Initializing Waarp authentication XML file.
 # --------------------------------------------------
@@ -141,6 +155,12 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_server.jks" ]; then
     -u "/config/ssl/keystorepass" -v ${WAARP_KEYSTOREPASS}  \
     -u "/config/ssl/keypass" -v ${WAARP_KEYPASS} \
     ${SERVER_CONFIG}
+
+    xmlstarlet ed -P -S -L \
+    -u "/config/ssl/keypath" -v "/etc/waarp/certs/${WAARP_APPNAME}_server.jks" \
+    -u "/config/ssl/keystorepass" -v ${WAARP_KEYSTOREPASS}  \
+    -u "/config/ssl/keypass" -v ${WAARP_KEYPASS} \
+    ${CLIENT_CONFIG}
 fi
 
 # Trust
@@ -159,12 +179,18 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_trust.jks" ]; then
     -u "/config/ssl/trustkeypath" -v "/etc/waarp/certs/${WAARP_APPNAME}_trust.jks" \
     -u "/config/ssl/trustkeystorepass" -v ${WAARP_TRUSTKEYSTOREPASS} \
     ${SERVER_CONFIG}
+
+    xmlstarlet ed -P -S -L \
+    -u "/config/ssl/trustkeypath" -v "/etc/waarp/certs/${WAARP_APPNAME}_trust.jks" \
+    -u "/config/ssl/trustkeystorepass" -v ${WAARP_TRUSTKEYSTOREPASS} \
+    ${CLIENT_CONFIG}
 fi
 
 
 # Initializing Waarp SNMP file
 # --------------------------------------------------
 echo $(date --rfc-3339=seconds) 'Initializing Waarp SNMP file'
+
 xmlstarlet ed -P -S -L \
 -u "/config/server/snmpconfig" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/snmpconfig.xml" \
 ${SERVER_CONFIG}
@@ -235,12 +261,23 @@ xmlstarlet ed -P -S -L \
 -u "/config/db/dbpasswd" -v "${WAARP_DATABASE_PASSWORD}" \
 ${SERVER_CONFIG}
 
+xmlstarlet ed -P -S -L \
+-u "/config/db/dbdriver" -v "${WAARP_DATABASE_TYPE}" \
+-u "/config/db/dbserver" -v "${WAARP_DATABASE_URL}"  \
+-u "/config/db/dbuser" -v "${WAARP_DATABASE_USER}" \
+-u "/config/db/dbpasswd" -v "${WAARP_DATABASE_PASSWORD}" \
+${CLIENT_CONFIG}
 
 # Populating Waarp Database
 # --------------------------------------------------
 ${R66INIT} -initdb
 ${R66INIT} -auth /etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml
 ${R66INIT} -upgradedb
+
+
+# Cleanup
+# # --------------------------------------------------
+rm -rf /etc/waarp/conf.d/template
 
 echo $(date --rfc-3339=seconds) --------------------------------------------------
 echo $(date --rfc-3339=seconds) 'Waarp init process completed; ready for start up.'

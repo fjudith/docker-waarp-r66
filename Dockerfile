@@ -3,7 +3,6 @@ FROM centos:6
 MAINTAINER Florian JUDITH <florian.judith.b@gmail.com>
 
 ENV WAARP_R66_VERSION=3.0.6
-ENV WAARP_GWFTP_VERSION=3.0.4
 ENV WAARP_PASSWORD_VERSION=3.0.2
 
 RUN yum update -y
@@ -36,6 +35,7 @@ RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-server-3.0.6-1.el6.noarch.rp
 
 RUN rm -f /tmp/waarp*.rpm
 
+
 # Waap Internal Name
 ENV WAARP_APPNAME="server1"
 ENV WAARP_DATABASE_LANGUAGE="en"
@@ -66,13 +66,13 @@ ENV WAARP_SNMP_PRIVPASS="password"
 
 ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
 ENV SERVER_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml"
-ENV CLIENT_CONFIG=${SERVER_CONFIG}
+ENV CLIENT_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/client.xml"
 ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-server.xml "
 ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-client.xml "
 
 # Waarp binaries and configuration files
 ADD assets/bin/ /usr/bin/
-ADD assets/certs/* /etc/waarp/certs/
+#ADD assets/certs/* /etc/waarp/certs/
 ADD assets/conf.d/ /etc/waarp/conf.d/
 
 COPY assets/init-functions /usr/share/waarp/
