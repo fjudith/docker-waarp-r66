@@ -126,7 +126,7 @@ waarp-r66-pg:
     POSTGRES_USER: waarp
   volumes:
   - waarp-server1-db:/var/lib/postgresql
-  - waarp-server1-db:/var/log/postgresql
+  - waarp-server1-dblog:/var/log/postgresql
 
 waarp-r66:
   image: fjudith/waarp-r66
