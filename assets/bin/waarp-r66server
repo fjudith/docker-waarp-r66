@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # $0: script name
 # $1: command
 # $2...n: opts
