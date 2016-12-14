@@ -102,7 +102,7 @@ ENV WAARP_SNMP_PRIVPASS="password"
 
 ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
 ENV SERVER_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml"
-ENV CLIENT_CONFIG=${SERVER_CONFIG}
+ENV CLIENT_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml"
 ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-server.xml "
 ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-client.xml "
 
