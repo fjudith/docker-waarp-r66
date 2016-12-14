@@ -108,6 +108,7 @@ ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/l
 
 # Waarp binaries and configuration files
 ADD assets/bin/ /usr/bin/
+RUN chmod +x /usr/bin/waarp-r66server /usr/bin/waarp-r66client
 #ADD assets/certs/* /etc/waarp/certs/
 ADD assets/conf.d/ /etc/waarp/conf.d/
 
