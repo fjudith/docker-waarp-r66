@@ -108,13 +108,13 @@ ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/l
 
 # Waarp binaries and configuration files
 ADD assets/bin/ /usr/bin/
-RUN chmod +x /usr/bin/waarp-r66server /usr/bin/waarp-r66client
+RUN chmod 755 /usr/bin/waarp-r66server /usr/bin/waarp-r66client
 #ADD assets/certs/* /etc/waarp/certs/
 ADD assets/conf.d/ /etc/waarp/conf.d/
 
 COPY assets/init-functions /usr/share/waarp/
 COPY assets/*.sh /usr/share/waarp/
-RUN chmod +x /usr/share/waarp/* && \
+RUN chmod 755 /usr/share/waarp/*.sh && \
 	echo "export TERM=xterm-256color" >> ~/.bashrc && \
 	echo ". /usr/share/waarp/init-commands.sh" >> ~/.bashrc
 
