@@ -119,7 +119,7 @@ RUN chmod 755 /usr/share/waarp/*.sh && \
 	echo ". /usr/share/waarp/init-commands.sh" >> ~/.bashrc
 
 ADD assets/certs/* /etc/waarp/certs/
-ADD assets/conf.d/ /etc/waarp/conf.d/
+ADD assets/conf.d/ /tmp/conf.d/
 COPY assets/init-functions /usr/share/waarp/
 
 COPY docker-entrypoint.sh /
