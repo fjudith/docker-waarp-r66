@@ -148,5 +148,5 @@ WORKDIR /usr/share/waarp
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
-CMD ["bash"]
+# CMD ["bash"]
 
