@@ -131,4 +131,5 @@ EXPOSE 8088
 
 WORKDIR /usr/share/waarp
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["bash"]
