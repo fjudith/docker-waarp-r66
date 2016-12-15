@@ -132,14 +132,14 @@ EXPOSE 8066 8067
 # REST API ports
 EXPOSE 8088
 
-RUN chown -R waarp:waarp \
-	/usr/bin/waarp-r66server \
-	/usr/bin/waarp-r66client \
-	/etc/waarp/ \
-	/usr/share/waarp/ \
-	/var/lib/waarp/
+# RUN chown -R waarp:waarp \
+# 	/usr/bin/waarp-r66server \
+# 	/usr/bin/waarp-r66client \
+# 	/etc/waarp/ \
+# 	/usr/share/waarp/ \
+# 	/var/lib/waarp/
 
-USER waarp
+# USER waarp
 
 WORKDIR /usr/share/waarp
 
