@@ -137,7 +137,7 @@ RUN chown -R waarp:waarp \
 	/usr/bin/waarp-r66client \
 	/etc/waarp/ \
 	/usr/share/waarp/ \
-	/var/lib/waarp
+	/var/lib/waarp/
 
 USER waarp
 
