@@ -17,21 +17,22 @@ RUN yum install -y \
 
 RUN yum clean all
 
+
 # Download Waarp rpm package 3.0.6
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-ctl-0.1.2-1.el6.x86_64.rpm -o /tmp/waarp-ctl.rpm
-RUN rpm -iv /tmp/waarp-ctl.rpm
+RUN rpm --force -iv /tmp/waarp-ctl.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-common-1.0.0-1.el6.noarch.rpm -o /tmp/waarp-common-1.rpm && \
-	rpm -iv /tmp/waarp-common-1.rpm
+	rpm --force -iv /tmp/waarp-common-1.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-common-3.0.6-1.el6.noarch.rpm -o /tmp/waarp-common.rpm && \
-	rpm -iv /tmp/waarp-common.rpm
+	rpm --force -iv /tmp/waarp-common.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-client-3.0.6-1.el6.noarch.rpm -o /tmp/waarp-r66-client.rpm && \
-	rpm -iv /tmp/waarp-r66-client.rpm
+	rpm --force -iv /tmp/waarp-r66-client.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-server-3.0.6-1.el6.noarch.rpm -o /tmp/waarp-r66-server.rpm && \
-	rpm -iv /tmp/waarp-r66-server.rpm
+	rpm --force -iv /tmp/waarp-r66-server.rpm
 
 RUN rm -f /tmp/waarp*.rpm
 
@@ -108,18 +109,22 @@ ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/l
 
 # Waarp binaries and configuration files
 ADD assets/bin/ /usr/bin/
-RUN chmod 755 /usr/bin/waarp-r66server /usr/bin/waarp-r66client
-#ADD assets/certs/* /etc/waarp/certs/
-ADD assets/conf.d/ /etc/waarp/conf.d/
+RUN chmod 755 \
+	/usr/bin/waarp-r66server \
+	/usr/bin/waarp-r66client
 
-COPY assets/init-functions /usr/share/waarp/
 COPY assets/*.sh /usr/share/waarp/
 RUN chmod 755 /usr/share/waarp/*.sh && \
 	echo "export TERM=xterm-256color" >> ~/.bashrc && \
 	echo ". /usr/share/waarp/init-commands.sh" >> ~/.bashrc
 
+ADD assets/certs/* /etc/waarp/certs/
+ADD assets/conf.d/ /etc/waarp/conf.d/
+COPY assets/init-functions /usr/share/waarp/
+
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
+
 
 # Waarp ports
 EXPOSE 6666 6667
@@ -130,14 +135,19 @@ EXPOSE 8066 8067
 # REST API ports
 EXPOSE 8088
 
-RUN chown -R waarp:waarp \
-	/etc/waarp \
-	/usr/share/waarp \
-	/var/lib/waarp
 
-USER waarp
+# RUN chown -R waarp:waarp \
+# 	/usr/bin/waarp-r66server \
+# 	/usr/bin/waarp-r66client \
+# 	/etc/waarp/ \
+# 	/usr/share/waarp/ \
+# 	/var/lib/waarp/
+
+# USER waarp
 
 WORKDIR /usr/share/waarp
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
-#CMD ["bash"]
+
+# CMD ["bash"]
+
