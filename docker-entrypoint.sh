@@ -22,7 +22,7 @@ export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPAT
 # --------------------------------------------------
 echo $(date --rfc-3339=seconds) 'Initializing Waarp command line tools'
 
-source /usr/share/waarp/variable.sh
+source /usr/share/waarp/variables.sh
 
 
 # Deploying XML configuration files.
