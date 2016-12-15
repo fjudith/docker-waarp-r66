@@ -122,7 +122,6 @@ RUN chmod 755 /usr/share/waarp/*.sh && \
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 
-USER waarp
 
 # Waarp ports
 EXPOSE 6666 6667
@@ -133,10 +132,14 @@ EXPOSE 8066 8067
 # REST API ports
 EXPOSE 8088
 
-RUN chown waarp:waarp \
+RUN chown -R waarp:waarp \
+	/usr/bin/waarp-r66server \
+	/usr/bin/waarp-r66client \
+	/etc/waarp/ \
 	/usr/share/waarp \
 	/var/lib/waarp
 
+USER waarp
 
 WORKDIR /usr/share/waarp
 
