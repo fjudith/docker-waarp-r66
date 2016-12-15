@@ -17,21 +17,22 @@ RUN yum install -y \
 
 RUN yum clean all
 
+
 # Download Waarp rpm package 3.0.6
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-ctl-0.1.2-1.el6.x86_64.rpm -o /tmp/waarp-ctl.rpm
-RUN rpm -iv /tmp/waarp-ctl.rpm
+RUN rpm --force -iv /tmp/waarp-ctl.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-common-1.0.0-1.el6.noarch.rpm -o /tmp/waarp-common-1.rpm && \
-	rpm -iv /tmp/waarp-common-1.rpm
+	rpm --force -iv /tmp/waarp-common-1.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-common-3.0.6-1.el6.noarch.rpm -o /tmp/waarp-common.rpm && \
-	rpm -iv /tmp/waarp-common.rpm
+	rpm --force -iv /tmp/waarp-common.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-client-3.0.6-1.el6.noarch.rpm -o /tmp/waarp-r66-client.rpm && \
-	rpm -iv /tmp/waarp-r66-client.rpm
+	rpm --force -iv /tmp/waarp-r66-client.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-server-3.0.6-1.el6.noarch.rpm -o /tmp/waarp-r66-server.rpm && \
-	rpm -iv /tmp/waarp-r66-server.rpm
+	rpm --force -iv /tmp/waarp-r66-server.rpm
 
 RUN rm -f /tmp/waarp*.rpm
 
@@ -108,7 +109,7 @@ ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/l
 
 # Waarp binaries and configuration files
 ADD assets/bin/ /usr/bin/
-#ADD assets/certs/* /etc/waarp/certs/
+ADD assets/certs/* /etc/waarp/certs/
 ADD assets/conf.d/ /etc/waarp/conf.d/
 
 COPY assets/init-functions /usr/share/waarp/
@@ -119,6 +120,8 @@ RUN chmod +x /usr/share/waarp/* && \
 
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
+
+USER waarp
 
 # Waarp ports
 EXPOSE 6666 6667
@@ -131,5 +134,5 @@ EXPOSE 8088
 
 WORKDIR /usr/share/waarp
 
-# ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["bash"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+# CMD ["bash"]
