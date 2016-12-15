@@ -275,10 +275,8 @@ ${CLIENT_CONFIG}
 # ${R66INIT} -upgradedb
 
 
-# Cleanup
-# # --------------------------------------------------
-rm -rf /etc/waarp/conf.d/template
-
+# Start Waarp-R66
+# --------------------------------------------------
 echo $(date --rfc-3339=seconds) --------------------------------------------------
 echo $(date --rfc-3339=seconds) 'Waarp init process completed; ready for start up.'
 echo $(date --rfc-3339=seconds) --------------------------------------------------
