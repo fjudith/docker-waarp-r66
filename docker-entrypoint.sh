@@ -22,7 +22,7 @@ export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPAT
 # --------------------------------------------------
 echo $(date --rfc-3339=seconds) 'Initializing Waarp command line tools'
 
-. /usr/share/waarp/init-commands.sh
+source /usr/share/waarp/variable.sh
 
 
 # Deploying XML configuration files.
@@ -67,7 +67,7 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" ]; then
 	)
 else
 	echo $(date --rfc-3339=seconds) 'Updating Waarp password file'
-	WAARP_CRYPTED_PASSWORD=$(<
+	WAARP_CRYPTED_PASSWORD=$(
     	java -cp "${R66_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
 	    -des -ki "/etc/waarp/certs/cryptokey.des" \
 	    -po "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" 2>&1 | \
@@ -213,7 +213,7 @@ else
     WAARP_DATABASE_USER:=${MYSQL_ENV_MYSQL_USER:-root}
 
     if [ "$WAARP_DATABASE_USER" = 'root' ]; then
-    	WAARP_DATABASE_PASSWORD:=$MYSQL_ENV_MYSQL_ROOT_PASSWORD
+        WAARP_DATABASE_PASSWORD=$MYSQL_ENV_MYSQL_ROOT_PASSWORD
     fi
     
     WAARP_DATABASE_PASSWORD=$MYSQL_ENV_MYSQL_PASSWORD
@@ -235,10 +235,10 @@ else
     echo $(date --rfc-3339=seconds) "Database engine is PostgreSQL"
    
     WAARP_DATABASE_TYPE='postgresql'
-    WAARP_DATABASE_USER:=${POSTGRES_ENV_POSTGRES_USER:-root}
+    WAARP_DATABASE_USER=${POSTGRES_ENV_POSTGRES_USER:-root}
 
     if [ "$WAARP_DATABASE_USER" = 'postgres' ]; then
-        WAARP_DATABASE_PASSWORD:='postgres'
+        WAARP_DATABASE_PASSWORD='postgres'
     fi
     
     WAARP_DATABASE_PASSWORD=$POSTGRES_ENV_POSTGRES_PASSWORD
@@ -270,9 +270,9 @@ ${CLIENT_CONFIG}
 
 # Populating Waarp Database
 # --------------------------------------------------
-${R66INIT} -initdb
-${R66INIT} -auth /etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml
-${R66INIT} -upgradedb
+/usr/bin/waarp-r66server initdb
+/usr/bin/waarp-r66server loadauth /etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml
+# ${R66INIT} -upgradedb
 
 
 # Cleanup

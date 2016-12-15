@@ -130,6 +130,12 @@ EXPOSE 8066 8067
 # REST API ports
 EXPOSE 8088
 
+RUN chown waarp:waarp \
+	/usr/share/waarp \
+	/var/lib/waarp
+
+
 WORKDIR /usr/share/waarp
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
+#CMD ["bash"]
