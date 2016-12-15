@@ -1,5 +1,9 @@
 #!/bin/bash
 #set -e
+# Waap Internal Name
+export WAARP_APPNAME=${WAARP_APPNAME:-"server1"}
+export WAARP_DATABASE_LANGUAGE=${WAARP_DATABASE_LANGUAGE:-"en"}
+export WAARP_ADMIN_PASSWORD=${WAARP_ADMIN_PASSWORD:-"password"}
 
 export JAVA_HOME=$(readlink -f $(dirname $(readlink -f $(which java)))/..)
 export JAVA_OPTS1="-server"
@@ -11,9 +15,15 @@ export PATH=${JAVA_HOME}/bin:$PATH
 export CONFDIR=${CONFDIR:-/etc/waarp/conf.d/$WAARP_APPNAME}
 export PIDFILE=/var/lib/waarp/${WAARP_APPNAME}/r66server.pid
 
+export SERVER_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml"
+export CLIENT_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/client.xml"
+export LOGSERVER=" -Dlogback.configurationFile=${CONFDIR}/logback-gwftp.xml "
+export LOGCLIENT=" -Dlogback.configurationFile=${CONFDIR}/logback-client.xml "
+
 export JAVARUNCLIENT="${JAVA_RUN} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGCLIENT} "
 export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGSERVER} "
 
+source /usr/share/waarp/init-commands.sh
 
 # Initializing Command Line Tools.
 # The script contains command line tools
@@ -22,9 +32,35 @@ export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPAT
 # --------------------------------------------------
 echo $(date --rfc-3339=seconds) 'Initializing Waarp command line tools'
 
-source /usr/share/waarp/variables.sh
+#source /usr/share/waarp/variables.sh
 
+# Waarp Database configuration
+# --------------------------------------------------
+export WAARP_DATABASE_TYPE=${WAARP_DATABASE_TYPE:-"h2"}
+export WAARP_DATABASE_NAME=${WAARP_DATABASE_NAME:-"$WAARP_APPNAME_waarp"}
+export WAARP_DATABASE_USER=${WAARP_DATABASE_USER:-"waarp"}
+export WAARP_DATABASE_PASSWORD=${WAARP_DATABASE_PASSWORD:-"waarp"}
+export WAARP_DATABASE_URL=${WAARP_DATABASE_URL:-"jdbc:$WAARP_DATABASE_TYPE:/var/lib/waarp/$WAARP_APPNAME/db/$WAARP_DATABASE_NAME;MODE=ORACLE;AUTO_SERVER=TRUE"}
 
+# SSL
+# --------------------------------------------------
+export WAARP_SSL_DNAME=${WAARP_SSL_DNAME:-"CN=$WAARP_APPNAME\, OU=xfer\, O=MyCompany\, L=Paris\, S=Paris\, C=FR"}
+export WAARP_KEYSIZE=${WAARP_KEYSIZE:-"2048"}
+export WAARP_KEYALG=${WAARP_KEYALG:-"RSA"}
+export WAARP_SIGALG=${WAARP_SIGALG:-"SHA256withRSA"}
+export WAARP_KEYVAL=${WAARP_KEYVAL:-"3650"}
+export WAARP_ADMKEYSTOREPASS=${WAARP_ADMKEYSTOREPASS:-"password"}
+export WAARP_ADMKEYPASS=${WAARP_ADMKEYPASS-"password"}
+export WAARP_KEYSTOREPASS=${WAARP_KEYSTOREPASS:-"password"}
+export WAARP_KEYPASS=${WAARP_KEYPASS:-"password"}
+export WAARP_TRUSTKEYSTOREPASS=${WAARP_TRUSTKEYSTOREPASS:-"password"}
+
+# SNMP
+# --------------------------------------------------
+export WAARP_SNMP_AUTHPASS=${WAARP_SNMP_AUTHPASS:-"password"}
+export WAARP_SNMP_PRIVPASS=${WAARP_SNMP_PRIVPASS:-"password"}
+
+export
 # Deploying XML configuration files.
 # Copy the configuration from Template,
 # if not already customized
@@ -41,7 +77,7 @@ fi
 # --------------------------------------------------
 echo $(date --rfc-3339=seconds) 'Initializing Directories.'
 
-mkdir /var/lib/waarp/${WAARP_APPNAME}
+mkdir -v /var/lib/waarp/${WAARP_APPNAME}
 
 # Server
 xmlstarlet ed -P -S -L \
@@ -270,9 +306,9 @@ ${CLIENT_CONFIG}
 
 # Populating Waarp Database
 # --------------------------------------------------
-/usr/bin/waarp-r66server initdb
-/usr/bin/waarp-r66server loadauth /etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml
-# ${R66INIT} -upgradedb
+${R66INIT} -initdb
+${R66INIT} -auth /etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml
+${R66INIT} -upgradedb
 
 
 # Start Waarp-R66

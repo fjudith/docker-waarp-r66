@@ -73,39 +73,7 @@ RUN pushd /usr/share/waarp/r66-lib/ && \
     xml-apis-1.0.b2.jar xml-apis.jar XMLEditor-2.2.jar xmleditor.jar && \
     popd
 
-# Waap Internal Name
-ENV WAARP_APPNAME="server1"
-ENV WAARP_DATABASE_LANGUAGE="en"
-ENV WAARP_ADMIN_PASSWORD="password"
-
-# Waarp Database configuration
-ENV WAARP_DATABASE_TYPE="h2"
-ENV WAARP_DATABASE_NAME="${WAARP_APPNAME}_waarp"
-ENV WAARP_DATABASE_USER="waarp"
-ENV WAARP_DATABASE_PASSWORD="waarp"
-ENV WAARP_DATABASE_URL="jdbc:${WAARP_DATABASE_TYPE}:/var/lib/waarp/${WAARP_APPNAME}/db/${WAARP_DATABASE_NAME};MODE=ORACLE;AUTO_SERVER=TRUE"
-
-# SSL
-ENV WAARP_SSL_DNAME="CN=${WAARP_APPNAME}\, OU=xfer\, O=MyCompany\, L=Paris\, S=Paris\, C=FR"
-ENV WAARP_KEYSIZE="2048"
-ENV WAARP_KEYALG="RSA"
-ENV WAARP_SIGALG="SHA256withRSA"
-ENV WAARP_KEYVAL="3650"
-ENV WAARP_ADMKEYSTOREPASS="password"
-ENV WAARP_ADMKEYPASS="password"
-ENV WAARP_KEYSTOREPASS="password"
-ENV WAARP_KEYPASS="password"
-ENV WAARP_TRUSTKEYSTOREPASS="password"
-
-# SNMP
-ENV WAARP_SNMP_AUTHPASS="password"
-ENV WAARP_SNMP_PRIVPASS="password"
-
 ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
-ENV SERVER_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml"
-ENV CLIENT_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/client.xml"
-ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-server.xml "
-ENV LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-client.xml "
 
 # Waarp binaries and configuration files
 ADD assets/bin/ /usr/bin/
@@ -136,14 +104,14 @@ EXPOSE 8066 8067
 EXPOSE 8088
 
 
-# RUN chown -R waarp:waarp \
-# 	/usr/bin/waarp-r66server \
-# 	/usr/bin/waarp-r66client \
-# 	/etc/waarp/ \
-# 	/usr/share/waarp/ \
-# 	/var/lib/waarp/
+RUN chown -R waarp:waarp \
+ 	/usr/bin/waarp-r66server \
+ 	/usr/bin/waarp-r66client \
+ 	/etc/waarp/ \
+ 	/usr/share/waarp/ \
+ 	/var/lib/waarp/
 
-# USER waarp
+USER waarp
 
 WORKDIR /usr/share/waarp
 
