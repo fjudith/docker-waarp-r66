@@ -13,6 +13,7 @@ Waarp R66 : software for massive file transfer with monitoring, file watcher and
 * [X] REST API support
 * [X] SNMP support
 * [X] Responsive HTTP admin
+* [X] Running as Waarp
 
 # Quick start
 Run the Waarp-R66 image
@@ -21,15 +22,17 @@ Run the Waarp-R66 image
 
 NOTE: Please alow a few minutes for the application to start, especially if populating a remote database at first lauch. If you want to make sure that everythin went fine, whatch the logs:
 
-```
+```bash
 docker exec -it waarp-r66 bash
 tail -f /var/log/waarp/${WAARP_APPNAME}.log
 ```
+
 Go  to http://localhost:8066 or point to the IP address of your docker host. On Mac or Windows, replace `localhost`with the address of your Docker host which you can get using:
 
 ```
 docker-machine ip default
 ```
+
 For admin console, go to https://localhost:8067. the default username and password are:
 
 * username: **admin**
@@ -87,7 +90,8 @@ Only SNMPv2 and SNMPv3 (SHA/AES 256) is enabled by default.
 * **WAARP_SNMP_AUTHPASS**: SNMPv3 auth password. Default=`password`
 * **WAARP_SNMP_PRIVPASS**: SNMPv3 priv password. Default=`password`
 
-# Deployment using PostgreSQL
+# Kick-start with PostgreSQL
+
 Database is created by the database container and automatically populated by the application container on first run.
 
 ```bash
@@ -153,5 +157,6 @@ And run the following command from the same directory of the docker-compose.yml:
 docker-compose up -d
 ```
 # Reference
+
 * http://www.waarp.fr
 * https://github.com/waarp
