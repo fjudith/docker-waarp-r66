@@ -13,7 +13,7 @@ Waarp R66 : software for massive file transfer with monitoring, file watcher and
 * [X] REST API support
 * [X] SNMP support
 * [X] Responsive HTTP admin
-* [X] Running as Waarp
+* [X] Running as `waarp`user
 
 # Quick start
 Run the Waarp-R66 image
