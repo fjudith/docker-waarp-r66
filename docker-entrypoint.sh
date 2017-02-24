@@ -117,6 +117,8 @@ xmlstarlet ed -P -S -L \
 -u "/config/identity/cryptokey" -v "/etc/waarp/certs/cryptokey.des" \
 -u "/config/identity/authentfile" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/${WAARP_APPNAME}_Authentication.xml" \
 -u "/config/server/serverpasswd" -v "${WAARP_CRYPTED_PASSWORD}" \
+-u "/config/business/businessid" -v "${WAARP_APPNAME}" \
+-u "/config/business/businessid" -v "${WAARP_APPNAME}-ssl" \
 ${SERVER_CONFIG}
 
 xmlstarlet ed -P -S -L \
