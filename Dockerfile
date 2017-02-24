@@ -39,7 +39,7 @@ RUN curl https://dl.waarp.org/repos/rhel6/waarp-repo-1.0.0-1.el6.noarch.rpm -o /
 
 RUN rm -f /tmp/waarp*.rpm
 
-# Download & deploy Waarp R66 patch 3.0.7
+# Update Waarp Web administration UI
 RUN pushd /tmp/ && \
 	curl -O https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-3.0.7.zip && \
 	unzip -x https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-3.0.7.zip -d /tmp/ && \
