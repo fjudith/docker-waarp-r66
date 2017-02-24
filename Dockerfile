@@ -53,7 +53,8 @@ ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/u
 ADD assets/bin/ /usr/bin/
 RUN chmod 755 \
 	/usr/bin/waarp-r66server \
-	/usr/bin/waarp-r66client
+	/usr/bin/waarp-r66client \
+	/usr/bin/waarp-ctl
 
 COPY assets/*.sh /usr/share/waarp/
 RUN chmod 755 /usr/share/waarp/*.sh && \
