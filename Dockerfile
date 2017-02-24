@@ -41,10 +41,10 @@ RUN rm -f /tmp/waarp*.rpm
 
 # Update Waarp Web administration UI
 RUN pushd /tmp/ && \
-	curl -O https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-3.0.7.zip && \
-	unzip -x https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-3.0.7.zip -d /tmp/ && \
-	cp -rf /tmp/waarp-r66-3.0.7/httpadmin/* /usr/share/waarp/r66-admin/ && \
-	rm -rf /tmp/waarp-r66-3.0.7 && \
+	curl -O https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_VERSION}.zip && \
+	unzip -x /tmp/waarp-r66-${WAARP_R66_VERSION}.zip -d /tmp/ && \
+	cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}/httpadmin/* /usr/share/waarp/r66-admin/ && \
+	rm -rf /tmp/waarp-r66-{WAARP_R66_VERSION}* && \
 	popd
 
 ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
