@@ -77,7 +77,7 @@ EXPOSE 8066 8067
 # REST API ports
 EXPOSE 8088
 
-
+# Create spool and flags directories and apply permission to waarp user
 RUN chown -R waarp:waarp \
  	/usr/bin/waarp-r66server \
  	/usr/bin/waarp-r66client \

@@ -60,7 +60,6 @@ export WAARP_TRUSTKEYSTOREPASS=${WAARP_TRUSTKEYSTOREPASS:-"password"}
 export WAARP_SNMP_AUTHPASS=${WAARP_SNMP_AUTHPASS:-"password"}
 export WAARP_SNMP_PRIVPASS=${WAARP_SNMP_PRIVPASS:-"password"}
 
-export
 # Deploying XML configuration files.
 # Copy the configuration from Template,
 # if not already customized
@@ -78,6 +77,15 @@ fi
 echo $(date --rfc-3339=seconds) 'Initializing Directories.'
 
 mkdir -v /var/lib/waarp/${WAARP_APPNAME}
+
+# File Transfer directory 
+mkdir -v /var/lib/waarp/${WAARP_APPNAME}/xfer
+
+# File watcher dirctory
+mkdir -v /var/lib/waarp/${WAARP_APPNAME}/spool
+
+# File watcher flags dirctory
+mkdir -v /var/lib/waarp/${WAARP_APPNAME}/flags
 
 # Server
 xmlstarlet ed -P -S -L \
