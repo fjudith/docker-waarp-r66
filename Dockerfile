@@ -18,7 +18,7 @@ RUN yum install -y \
 RUN yum clean all
 
 
-# Download Waarp rpm package 3.0.6
+# Download Waarp rpm package 3.0.7
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-ctl-0.1.2-1.el6.x86_64.rpm -o /tmp/waarp-ctl.rpm
 RUN rpm --force -iv /tmp/waarp-ctl.rpm
 
