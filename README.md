@@ -1,5 +1,8 @@
 [![](https://images.microbadger.com/badges/image/fjudith/waarp-r66.svg)](https://microbadger.com/images/fjudith/waarp-r66 "Get your own image badge on microbadger.com")
 
+[3.0.8, latest](https://github.com/fjudith/docker-waarp-r66/tree/3.0.8)
+[3.0.7](https://github.com/fjudith/docker-waarp-r66/tree/3.0.7)
+
 
 # Introduction
 

@@ -2,7 +2,7 @@ FROM centos:6
 
 MAINTAINER Florian JUDITH <florian.judith.b@gmail.com>
 
-ENV WAARP_R66_VERSION=3.0.7
+ENV WAARP_R66_VERSION=3.0.8
 ENV WAARP_PASSWORD_VERSION=3.0.2
 
 RUN yum update -y
@@ -18,20 +18,20 @@ RUN yum install -y \
 RUN yum clean all
 
 
-# Download Waarp rpm package 3.0.7
+# Download Waarp rpm package 3.0.8
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-ctl-0.1.2-1.el6.x86_64.rpm -o /tmp/waarp-ctl.rpm
 RUN rpm --force -iv /tmp/waarp-ctl.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-common-1.0.0-1.el6.noarch.rpm -o /tmp/waarp-common-1.rpm && \
 	rpm --force -iv /tmp/waarp-common-1.rpm
 
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-common-3.0.7-1.el6.noarch.rpm -o /tmp/waarp-common.rpm && \
+RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-common-${VERSION}-1.el6.noarch.rpm -o /tmp/waarp-common.rpm && \
 	rpm --force -iv /tmp/waarp-common.rpm
 
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-client-3.0.7-1.el6.noarch.rpm -o /tmp/waarp-r66-client.rpm && \
+RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-client-${VERSION}-1.el6.noarch.rpm -o /tmp/waarp-r66-client.rpm && \
 	rpm --force -iv /tmp/waarp-r66-client.rpm
 
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-server-3.0.7-1.el6.noarch.rpm -o /tmp/waarp-r66-server.rpm && \
+RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-server-${VERSION}-1.el6.noarch.rpm -o /tmp/waarp-r66-server.rpm && \
 	rpm --force -iv /tmp/waarp-r66-server.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-repo-1.0.0-1.el6.noarch.rpm -o /tmp/waarp-repo.rpm && \
