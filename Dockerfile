@@ -25,13 +25,13 @@ RUN rpm --force -iv /tmp/waarp-ctl.rpm
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-common-1.0.0-1.el6.noarch.rpm -o /tmp/waarp-common-1.rpm && \
 	rpm --force -iv /tmp/waarp-common-1.rpm
 
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-common-${VERSION}-1.el6.noarch.rpm -o /tmp/waarp-common.rpm && \
+RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-common-${WAARP_R66_VERSION}-1.el6.noarch.rpm -o /tmp/waarp-common.rpm && \
 	rpm --force -iv /tmp/waarp-common.rpm
 
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-client-${VERSION}-1.el6.noarch.rpm -o /tmp/waarp-r66-client.rpm && \
+RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-client-${WAARP_R66_VERSION}-1.el6.noarch.rpm -o /tmp/waarp-r66-client.rpm && \
 	rpm --force -iv /tmp/waarp-r66-client.rpm
 
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-server-${VERSION}-1.el6.noarch.rpm -o /tmp/waarp-r66-server.rpm && \
+RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-server-${WAARP_R66_VERSION}-1.el6.noarch.rpm -o /tmp/waarp-r66-server.rpm && \
 	rpm --force -iv /tmp/waarp-r66-server.rpm
 
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-repo-1.0.0-1.el6.noarch.rpm -o /tmp/waarp-repo.rpm && \
