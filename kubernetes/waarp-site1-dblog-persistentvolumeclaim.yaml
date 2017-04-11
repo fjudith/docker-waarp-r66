@@ -4,13 +4,13 @@ metadata:
   creationTimestamp: null
   labels:
     io.kompose.service: waarp-site1-dblog
+    type: local
   name: waarp-site1-dblog
 spec:
   accessModes:
   - ReadWriteOnce
-  resources:
-    requests:
-      storage: 100Mi
+  capacity:
+    storage: 100Mi
   hostPath:
-    path: /var/lib/docker/volumes/waarp-site1-dblog
+    path: "/var/lib/docker/volumes/waarp-site1-dblog"
 status: {}
