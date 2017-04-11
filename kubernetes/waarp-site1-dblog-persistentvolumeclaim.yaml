@@ -8,7 +8,7 @@ metadata:
   name: waarp-site1-dblog
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   capacity:
     storage: 100Mi
   hostPath:
