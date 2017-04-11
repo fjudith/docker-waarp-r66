@@ -18,7 +18,10 @@ spec:
         - name: POSTGRES_DB
           value: site1-waarp
         - name: POSTGRES_PASSWORD
-          value: V3ry1nS3cur3P4ssw0rd
+          valueFrom:
+            secretKeyRef:
+              name: postgres-pass
+              key: postgres.password.txt
         - name: POSTGRES_USER
           value: waarp
         image: postgres
