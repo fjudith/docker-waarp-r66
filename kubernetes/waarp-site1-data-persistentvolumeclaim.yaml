@@ -12,5 +12,5 @@ spec:
     requests:
       storage: 100Mi
   hostPath:
-  path: /var/lib/docker/volumes/waarp-site1-data
+    path: /var/lib/docker/volumes/waarp-site1-data
 status: {}
