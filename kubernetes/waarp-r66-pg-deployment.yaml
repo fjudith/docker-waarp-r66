@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: waarp-r66-pg
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: waarp-r66-pg
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: site1-waarp
+        - name: POSTGRES_PASSWORD
+          value: V3ry1nS3cur3P4ssw0rd
+        - name: POSTGRES_USER
+          value: waarp
+        image: postgres
+        name: waarp-r66-pg
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: waarp-site1-db
+        - mountPath: /var/log/postgresql
+          name: waarp-site1-dblog
+      restartPolicy: Always
+      volumes:
+      - name: waarp-site1-db
+        persistentVolumeClaim:
+          claimName: waarp-site1-db
+      - name: waarp-site1-dblog
+        persistentVolumeClaim:
+          claimName: waarp-site1-dblog
+status: {}

@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: waarp-r66
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: waarp-r66
+    spec:
+      containers:
+      - env:
+        - name: WAARP_APPNAME
+          value: site1
+        - name: WAARP_ADMIN_PASSWORD
+          value: V3ry1nS3cur3P4ssw0rd
+        image: fjudith/waarp-r66:3.0.8
+        name: waarp-r66
+        ports:
+        - containerPort: 6666
+        - containerPort: 6667
+        - containerPort: 8066
+        - containerPort: 8067
+        - containerPort: 8088
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/waarp
+          name: waarp-site1-etc
+        - mountPath: /var/lib/waarp
+          name: waarp-site1-data
+        - mountPath: /var/log/waarp
+          name: waarp-site1-log
+      restartPolicy: Always
+      volumes:
+      - name: waarp-site1-etc
+        persistentVolumeClaim:
+          claimName: waarp-site1-etc
+      - name: waarp-site1-data
+        persistentVolumeClaim:
+          claimName: waarp-site1-data
+      - name: waarp-site1-log
+        persistentVolumeClaim:
+          claimName: waarp-site1-log
+status: {}

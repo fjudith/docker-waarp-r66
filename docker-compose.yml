@@ -1,0 +1,73 @@
+version: '2'
+volumes:
+  waarp-site1-dblog:
+    external: true
+    driver: 'null'
+  waarp-site1-etc:
+    external: true
+    driver: 'null'
+  waarp-site1-log:
+    external: true
+    driver: 'null'
+  waarp-site1-data:
+    external: true
+    driver: 'null'
+  waarp-site1-db:
+    external: true
+    driver: 'null'
+services:
+  waarp-r66-pg:
+    image: postgres
+    environment:
+      POSTGRES_DB: site1-waarp
+      POSTGRES_PASSWORD: V3ry1nS3cur3P4ssw0rd
+      POSTGRES_USER: waarp
+    volumes:
+    - waarp-site1-db:/var/lib/postgresql/data
+    - waarp-site1-dblog:/var/log/postgresql
+  waarp-cifs:
+    image: fjudith/samba-join-ad
+    hostname: site1
+    environment:
+      ADMIN_SERVER: dc1.example.com dc2.example.com
+      AD_PASSWORD: Dj43l1ss.01
+      AD_USERNAME: fjudith
+      DOMAIN_NAME: example.com
+      LOG_LEVEL: '5'
+      TZ: Europe/Paris
+      WORKGROUP: EXAMPLE
+    stdin_open: true
+    dns_search:
+    - example.com
+    dns:
+    - 192.168.1.1
+    - 192.168.1.2
+    domainname: example.com
+    tty: true
+    links:
+    - waarp-r66:waarp-engine
+    ports:
+    - 137:137/tcp
+    - 137:137/udp
+    - 138:138/tcp
+    - 138:138/udp
+    - 139:139/tcp
+    - 445:445/tcp
+    - 445:445/udp
+  waarp-r66:
+    image: fjudith/waarp-r66:3.0.8
+    environment:
+      WAARP_ADMIN_PASSWORD: V3ry1nS3cur3P4ssw0rd
+      WAARP_APPNAME: site1
+    volumes:
+    - waarp-site1-etc:/etc/waarp
+    - waarp-site1-data:/var/lib/waarp
+    - waarp-site1-log:/var/log/waarp
+    links:
+    - waarp-r66-pg:postgres
+    ports:
+    - 6666:6666/tcp
+    - 6667:6667/tcp
+    - 8066:8066/tcp
+    - 8067:8067/tcp
+    - 8088:8088/tcp
