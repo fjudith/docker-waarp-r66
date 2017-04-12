@@ -2,8 +2,9 @@ FROM centos:6
 
 MAINTAINER Florian JUDITH <florian.judith.b@gmail.com>
 
-RUN groupadd --system --gid 1010 waarp && \
-	useradd --system --create-home --shell /bin/bash --gid 1010 --uid 1010 waarp
+# Create by Waarp RPMs
+# RUN groupadd --system --gid 499 waarp && \
+#	useradd --system --create-home --shell /bin/bash --gid 499 --uid 499 waarp
 
 ENV WAARP_R66_VERSION=3.0.8
 ENV WAARP_PASSWORD_VERSION=3.0.2
