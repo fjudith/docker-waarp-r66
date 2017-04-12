@@ -137,13 +137,37 @@ Also in [waarp-r66-pg-deployment.yaml](https://github.com/fjudith/docker-waarp-r
 Up to this point one Deployment, one Pod, one PVC, one Service, one Endpoint, five PVs, and two Secrets have been created, shown below:
 
 ```bash
-kubectl get deployment,pod,svc,endpoints,pvc -l app=wordpress -o wide && \
+kubectl get deployment,pod,svc,endpoints,pvc -l app=waarp -o wide && \
   kubectl get secret postgres-pass && \
   kubectl get pv
 ```
 
 ```
-
+NAME                  DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE       CONTAINER(S)   IMAGE(S)   SELECTOR                                     
+deploy/waarp-r66-pg   1         1         1            1           3m        waarp-r66-pg   postgres   app=waarp-r66,io.kompose.service=waarp-r66-pg
+                                                                                                                                                    
+NAME                               READY     STATUS    RESTARTS   AGE       IP           NODE                                                       
+po/waarp-r66-pg-2119572569-hfd58   1/1       Running   0          3m        10.2.33.10   172.17.4.201                                               
+                                                                                                                                                    
+NAME               CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE       SELECTOR                                                                         
+svc/waarp-r66-pg   10.3.0.146   <none>        5432/TCP   3m        io.kompose.service=waarp-r66-pg                                                  
+                                                                                                                                                    
+NAME              ENDPOINTS         AGE                                                                                                             
+ep/waarp-r66-pg   10.2.33.10:5432   3m                                                                                                              
+                                                                                                                                                    
+NAME                    STATUS    VOLUME            CAPACITY   ACCESSMODES   STORAGECLASS   AGE                                                     
+pvc/waarp-site1-db      Bound     waarp-site1-log   2Gi        RWO                          3m                                                      
+pvc/waarp-site1-dblog   Bound     waarp-site1-db    2Gi        RWO                          3m                                                      
+NAME            TYPE      DATA      AGE                                                                                                             
+postgres-pass   Opaque    1         3m                                                                                                              
+NAME                CAPACITY   ACCESSMODES   RECLAIMPOLICY   STATUS      CLAIM                       STORAGECLASS   REASON    AGE                   
+waarp-site1-data    2Gi        RWO           Retain          Available                                                        3m                    
+waarp-site1-db      2Gi        RWO           Retain          Bound       default/waarp-site1-dblog                            3m                    
+waarp-site1-dblog   2Gi        RWO           Retain          Available                                                        3m                    
+waarp-site1-etc     100Mi      RWO           Retain          Available                                                        3m                    
+waarp-site1-log     2Gi        RWO           Retain          Bound       default/waarp-site1-db                               3m                     
 ```
 
+Deploy Waarp
 
+Next deploy 

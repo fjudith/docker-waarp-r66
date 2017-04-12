@@ -4,6 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     io.kompose.service: waarp-r66
+    app: waarp-r66
   name: waarp-r66
 spec:
   ports:
@@ -33,6 +34,7 @@ metadata:
   creationTimestamp: null
   labels:
     io.kompose.service: waarp-site1-etc
+    app: waarp-r66
   name: waarp-site1-etc
 spec:
   accessModes:
@@ -48,13 +50,14 @@ metadata:
   creationTimestamp: null
   labels:
     io.kompose.service: waarp-site1-data
+    app: waarp-r66
   name: waarp-site1-data
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 80Mi
+      storage: 1Gi
 status: {}
 ---
 apiVersion: v1
@@ -63,13 +66,14 @@ metadata:
   creationTimestamp: null
   labels:
     io.kompose.service: waarp-site1-log
+    app: waarp-r66
   name: waarp-site1-log
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 80Mi
+      storage: 1Gi
 status: {}
 ---
 apiVersion: extensions/v1beta1
@@ -86,25 +90,47 @@ spec:
       creationTimestamp: null
       labels:
         io.kompose.service: waarp-r66
+        app: waarp-r66
     spec:
       containers:
-      - env:
+      - image: fjudith/waarp-r66:3.0.8
+        name: waarp-r66
+        env:
         - name: WAARP_APPNAME
           value: site1
+        # $ kubectl create secret generic waarp-r66-pass --from-file=waarp-r66.password.txt
+        # make sure waarp-r66.password.txt does not have a trailing newline
         - name: WAARP_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
               name: waarp-r66-pass
               key: waarp-r66.password.txt
-        image: fjudith/waarp-r66:3.0.8
-        name: waarp-r66
+        - name: WAARP_DATABASE_TYPE
+          value: postgresql
+        - name: WAARP_DATABASE_NAME
+          value: site1-waarp
+        - name: WAARP_DATABASE_USER
+          value: site1-waarp
+        # $ kubectl create secret generic postgres-pass --from-file=postgres.password.txt
+        # make sure postgres.password.txt does not have a trailing newline
+        - name: WAARP_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-pass
+              key: postgres.password.txt
+        - name: WAARP_DATABASE_URL
+          value: jdbc:posgresql://waarp-r66-pg:5432/site1-waarp
         ports:
         - containerPort: 6666
+          name: xfer
         - containerPort: 6667
+          name: xferssl
         - containerPort: 8066
+          name: monwebui
         - containerPort: 8067
+          name: adminwebui
         - containerPort: 8088
-        resources: {}
+          name: apissl
         volumeMounts:
         - mountPath: /etc/waarp
           name: waarp-site1-etc
@@ -112,7 +138,6 @@ spec:
           name: waarp-site1-data
         - mountPath: /var/log/waarp
           name: waarp-site1-log
-      restartPolicy: Always
       volumes:
       - name: waarp-site1-etc
         persistentVolumeClaim:
