@@ -1,3 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: waarp-r66-pg
+    app: waarp-r66
+  name: waarp-r66-pg
+spec:
+  ports:
+    - port: 5432
+  selector:
+    io.kompose.service: waarp-r66-pg
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: waarp-site1-db
+    app: waarp-r66
+  name: waarp-site1-db
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+status: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: waarp-site1-dblog
+    app: waarp-r66
+  name: waarp-site1-dblog
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+status: {}
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -12,27 +60,32 @@ spec:
       creationTimestamp: null
       labels:
         io.kompose.service: waarp-r66-pg
+        app: waarp-r66
     spec:
       containers:
-      - env:
+      - image: postgres
+        name: waarp-r66-pg
+        env:
         - name: POSTGRES_DB
           value: site1-waarp
+        - name: POSTGRES_USER
+          value: waarp
+        # $ kubectl create secret generic postgres-pass --from-file=postgres.password.txt
+        # make sure postgres.password.txt does not have a trailing newline
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: postgres-pass
               key: postgres.password.txt
-        - name: POSTGRES_USER
-          value: waarp
-        image: postgres
-        name: waarp-r66-pg
-        resources: {}
+
+        ports:
+        - containerPort: 5432
+          name: postgres
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: waarp-site1-db
         - mountPath: /var/log/postgresql
           name: waarp-site1-dblog
-      restartPolicy: Always
       volumes:
       - name: waarp-site1-db
         persistentVolumeClaim:
