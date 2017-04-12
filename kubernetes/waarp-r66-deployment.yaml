@@ -25,6 +25,9 @@ spec:
     targetPort: 8088
   selector:
     io.kompose.service: waarp-r66
+    app: waarp-r66
+    tier: frontend
+  type: LoadBalancer
 status:
   loadBalancer: {}
 ---

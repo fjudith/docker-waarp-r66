@@ -170,4 +170,24 @@ waarp-site1-log     2Gi        RWO           Retain          Bound       default
 
 Deploy Waarp
 
-Next deploy 
+Next deploy Waarp-R66 using [waarp-r66-deployment.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-r66-deployment.yaml):
+
+```bash
+kubectl create -f $KUBE_REPO/waarp-r66-deployment.yaml
+```
+
+Here we are using many of the same features, such as volume claims for persistent storage and two secrets for passwords.
+
+The [Waarp-R66 image](https://hub.docker.com/u/fjudith/waarp-r66) accepts the database hostname through the environment variable `WAARP_DATABASE_URL`. We set the env value to the name of the PostgreSQL service we created: `waarp-r66-pg`.
+
+The Waarp-R66 service hase the setting `type: LoadBalancer`. This will set up the waarp-r66 servic behind an external IP.
+
+Find the external IP for your Waarp-R66 service. **It may take a minute to have an external IP assigned to the service , depending on your cluster environment**.
+
+```bash
+kubectl get services waarp-r66
+```
+
+```
+
+```
