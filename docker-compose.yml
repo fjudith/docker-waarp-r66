@@ -55,7 +55,7 @@ services:
     - 445:445/tcp
     - 445:445/udp
   waarp-r66:
-    image: fjudith/waarp-r66:3.0.8
+    image: fjudith/waarp-r66
     environment:
       WAARP_ADMIN_PASSWORD: V3ry1nS3cur3P4ssw0rd
       WAARP_APPNAME: site1

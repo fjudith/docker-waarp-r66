@@ -93,7 +93,7 @@ spec:
         app: waarp-r66
     spec:
       containers:
-      - image: fjudith/waarp-r66:3.0.8
+      - image: fjudith/waarp-r66
         name: waarp-r66
         env:
         - name: WAARP_APPNAME
