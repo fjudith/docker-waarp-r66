@@ -71,15 +71,11 @@ chmod a+rwt /var/lib/kubernetes/pv  # match /tmp permissions
 chcon -Rt svirt_sandbox_file_t /var/lib/kubernetes/pv
 ```
 
-Continuing with host path, create the persistent volume objects in Kubernetes using [*-persistentvolume.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes):
+Continuing with host path, create the persistent volume objects in Kubernetes using [waarp-site1-persistentvolume.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-site1-persistentvolume.yaml):
 
 ```bash
 export KUBE_REPO=https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes
-kubectl create -f $KUBE_REPO/waarp-site1-db-persistentvolume.yaml
-kubectl create -f $KUBE_REPO/waarp-site1-dblog-persistentvolume.yaml
-kubectl create -f $KUBE_REPO/waarp-site1-etc-persistentvolume.yaml
-kubectl create -f $KUBE_REPO/waarp-site1-data-persistentvolume.yaml
-kubectl create -f $KUBE_REPO/waarp-site1-log-persistentvolume.yaml
+kubectl create -f $KUBE_REPO/waarp-site1-persistentvolume.yaml
 ```
 
 ## Create the PostgreSQL and Waarp-R66 Passwords Secrets
@@ -104,9 +100,57 @@ The Waarp secret is only referenced by the Waarp-R66 pod configuration. It will 
 Now that the persistent disks and secrets are defined, the Kubernetes pods can be launched. Start PostgresSQL using [waarp-r66-pg-deployment.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-r66-pg-deployment.yaml).
 
 ```bash
-kubectl create -f $KUBE_REPO/waarp-r66-pg-service.yaml
-kubectl create -f $KUBE_REPO/waarp-site1-db-persistentvolumeclaim.yaml
-kubectl create -f $KUBE_REPO/waarp-site1-dblog-persistentvolumeclaim.yaml
 kubectl create -f $KUBE_REPO/waarp-r66-pg-deployment.yaml
 ```
+
+Take a look at [waarp-r66-pg-deployment.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-r66-pg-deployment.yaml), and note that we've defined two volume mounts for:
+
+* /var/lib/postgres/data
+* /var/log/postgres
+
+And then created a Persistent Volume Claim that each looks for a 2GB volume. This claim is satisfied by any volume that meets the requirements, in our case one of the volumes we created above.
+
+Also lookt at the `env` section and see that we specified the password by referencing the secret `posgres-pass`that we created above. Secrets can have multiple key:value pairs. Ours has only one key `postgres.password.txt`which was the name of the file we used to create de secret. The [PostgresSQL imgage](https://hub.docker.com/_/postgres/) sets the database password using the `POSTGRES_PASSWORD`environment variable.
+
+It my take a short period before the new pod reaches the `Running` state. List all pods to see the status of this new pod.
+
+```bash
+kubectl get pods
+```
+
+```
+NAME                            READY     STATUS    RESTARTS   AGE
+waarp-r66-pg-2119572569-p170x   1/1       Running   0          1m
+```
+
+Kubernetes logs the stderr and stdout for each pod. Take a look at the logs for a pod by using `kubectl log`. Copy the pod name from the `get pods`command, and then:
+
+```bash
+kubectl logs <pod-name>
+```
+
+```
+...
+PostgreSQL init process complete; ready for start up.
+
+LOG:  database system was shut down at 2017-04-12 12:14:19 UTC
+LOG:  MultiXact member wraparound protections are now enabled
+LOG:  database system is ready to accept connections
+LOG:  autovacuum launcher started
+```
+
+Also in [waarp-r66-pg-deployment.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-r66-pg-deployment.yaml) we created a service to allow ofther pods to reach this postgres instance. the name is `waarp-r66-pg`which resolves to the pod IP.
+
+Up to this point one Deployment, one Pod, one PVC, one Service, one Endpoint, five PVs, and two Secrets have been created, shown below:
+
+```bash
+kubectl get deployment,pod,svc,endpoints,pvc -l app=wordpress -o wide && \
+  kubectl get secret postgres-pass && \
+  kubectl get pv
+```
+
+```
+
+```
+
 
