@@ -8,13 +8,14 @@ metadata:
   name: waarp-r66-pg
 spec:
   ports:
-    - port: 5432
+  - name: "postgres"
+    protocol: TCP
+    port: 5432
+    targetPort: 5432
   selector:
     io.kompose.service: waarp-r66-pg
     app: waarp-r66
     tiers: postgres
-status:
-  loadBalancer: {}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -85,7 +86,6 @@ spec:
             secretKeyRef:
               name: postgres-pass
               key: postgres.password.txt
-
         ports:
         - containerPort: 5432
           name: postgres

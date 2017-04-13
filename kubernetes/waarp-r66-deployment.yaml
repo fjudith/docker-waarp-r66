@@ -5,28 +5,28 @@ metadata:
   labels:
     io.kompose.service: waarp-r66
     app: waarp-r66
+    tiers: waarp-r66
   name: waarp-r66
 spec:
   ports:
-  - name: "6666"
+  - name: "xfer"
     port: 6666
     targetPort: 6666
-  - name: "6667"
+  - name: "xferssl"
     port: 6667
     targetPort: 6667
-  - name: "8066"
+  - name: "monwebui"
     port: 8066
     targetPort: 8066
-  - name: "8067"
+  - name: "adminwebui"
     port: 8067
     targetPort: 8067
-  - name: "8088"
+  - name: "apissl"
     port: 8088
     targetPort: 8088
   selector:
     io.kompose.service: waarp-r66
-status:
-  loadBalancer: {}
+  type: LoadBalancer
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

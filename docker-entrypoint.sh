@@ -233,6 +233,10 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_trust.jks" ]; then
     ${CLIENT_CONFIG}
 fi
 
+# REST API
+if [ ! -f "/etc/waarp/certs/restsigning.key" ]; then
+    cat /dev/urandom | head -c64 > /etc/waarp/certs/restsigning.key
+fi
 
 # Initializing Waarp SNMP file
 # --------------------------------------------------
