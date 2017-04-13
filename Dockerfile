@@ -53,6 +53,8 @@ RUN pushd /tmp/ && \
 
 # Add JDBC drivers
 RUN pushd /usr/share/waarp/r66-lib/ && \
+	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jre6.jar && \
+	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jre7.jar && \
 	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jar && \
 	popd
 
