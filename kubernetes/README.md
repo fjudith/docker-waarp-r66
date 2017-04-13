@@ -61,7 +61,7 @@ On systems supporting selinux it is preferred to leave it _enabled/enforcing_. H
 ## on every node:
 sudo groupadd -r --gid 499 waarp && sudo useradd -ms /bin/bash --uid 499 --gid 499 waarp
 
-mkdir -p /var/lib/kubernetes/pv \
+mkdir -m 777 -p /var/lib/kubernetes/pv \
   /var/lib/kubernetes/pv/waarp-site1-etc
   /var/lib/kubernetes/pv/waarp-site1-data
   /var/lib/kubernetes/pv/waarp-site1-log
