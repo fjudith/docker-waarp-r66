@@ -59,6 +59,8 @@ On systems supporting selinux it is preferred to leave it _enabled/enforcing_. H
 
 ```bash
 ## on every node:
+sudo groupadd -r --gid 499 waarp && sudo useradd -ms /bin/bash --uid 499 --gid 499 waarp
+
 mkdir -p /var/lib/kubernetes/pv
 chmod a+rwt /var/lib/kubernetes/pv  # match /tmp permissions
 chcon -Rt svirt_sandbox_file_t /var/lib/kubernetes/pv

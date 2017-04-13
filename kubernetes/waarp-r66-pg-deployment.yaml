@@ -28,6 +28,9 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  selector:
+    matchLabels:
+      io.kompose.service: waarp-site1-db
 status: {}
 ---
 apiVersion: v1
@@ -44,6 +47,9 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  selector:
+    matchLabels:
+      io.kompose.service: waarp-site1-dblog
 status: {}
 ---
 apiVersion: extensions/v1beta1
@@ -84,8 +90,10 @@ spec:
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: waarp-site1-db
+          subPath: db
         - mountPath: /var/log/postgresql
           name: waarp-site1-dblog
+          subPath: dblog
       volumes:
       - name: waarp-site1-db
         persistentVolumeClaim:

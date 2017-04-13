@@ -42,6 +42,9 @@ spec:
   resources:
     requests:
       storage: 80Mi
+  selector:
+    matchLabels:
+      io.kompose.service: waarp-site1-etc
 status: {}
 ---
 apiVersion: v1
@@ -58,6 +61,9 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  selector:
+    matchLabels:
+      io.kompose.service: waarp-site1-data
 status: {}
 ---
 apiVersion: v1
@@ -74,6 +80,9 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  selector:
+    matchLabels:
+      io.kompose.service: waarp-site1-log
 status: {}
 ---
 apiVersion: extensions/v1beta1
@@ -134,10 +143,13 @@ spec:
         volumeMounts:
         - mountPath: /etc/waarp
           name: waarp-site1-etc
+          subPath: etc
         - mountPath: /var/lib/waarp
           name: waarp-site1-data
+          subPath: data
         - mountPath: /var/log/waarp
           name: waarp-site1-log
+          subPath: log
       volumes:
       - name: waarp-site1-etc
         persistentVolumeClaim:

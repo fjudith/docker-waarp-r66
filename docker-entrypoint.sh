@@ -68,6 +68,7 @@ echo $(date --rfc-3339=seconds) 'Deploying XML configuration files if required'
 
 if [ ! -f ${SERVER_CONFIG} ]; then
 	mkdir -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
+    mkdir -p "/etc/waarp/certs"
 	cp -vn /tmp/conf.d/template/*.xml /etc/waarp/conf.d/${WAARP_APPNAME}/
 fi
 
