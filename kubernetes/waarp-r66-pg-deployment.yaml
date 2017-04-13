@@ -9,13 +9,13 @@ metadata:
 spec:
   ports:
   - name: "postgres"
-    protocol: TCP
     port: 5432
     targetPort: 5432
   selector:
     io.kompose.service: waarp-r66-pg
     app: waarp-r66
     tiers: postgres
+  clusterIP: None
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

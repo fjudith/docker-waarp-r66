@@ -23,6 +23,8 @@ export LOGCLIENT=" -Dlogback.configurationFile=${CONFDIR}/logback-client.xml "
 export JAVARUNCLIENT="${JAVA_RUN} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGCLIENT} "
 export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGSERVER} "
 
+export R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
+
 source /usr/share/waarp/init-commands.sh
 
 # Initializing Command Line Tools.
