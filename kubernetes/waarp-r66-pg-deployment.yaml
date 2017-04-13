@@ -11,6 +11,8 @@ spec:
     - port: 5432
   selector:
     io.kompose.service: waarp-r66-pg
+    app: waarp-r66
+    tiers: postgres
 status:
   loadBalancer: {}
 ---

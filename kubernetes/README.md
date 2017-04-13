@@ -69,7 +69,7 @@ chcon -Rt svirt_sandbox_file_t /var/lib/kubernetes/pv
 Continuing with host path, create the persistent volume objects in Kubernetes using [waarp-site1-persistentvolume.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-site1-persistentvolume.yaml):
 
 ```bash
-export KUBE_REPO=https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes
+export KUBE_REPO=https://raw.githubusercontent.com/fjudith/docker-waarp-r66/master/kubernetes
 kubectl create -f $KUBE_REPO/waarp-site1-persistentvolume.yaml
 ```
 
