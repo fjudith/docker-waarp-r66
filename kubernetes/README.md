@@ -1,4 +1,4 @@
-Persistant Installation of PostgreSQL and Waarp-R66 on Kubernetes
+Persistent Installation of PostgreSQL and Waarp-R66 on Kubernetes
 =================================================================
 
 This example describes how to run a persisten installation of [Waarp-R66](http://waarp.fr) and [PostgreSQL](https://www.postgresql.org/) on Kubernetes. We'll use the official [postgres](https://hub.docker.com/_/postgres/) and [waarp-r66](https://hub.docker.com/r/fjudith/waarp-r66/) [Docker](https://www.docker.com) images for this installation.
