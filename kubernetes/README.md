@@ -6,8 +6,8 @@ This example describes how to run a persisten installation of [Waarp-R66](http:/
 Demonstrated Kubernetes Concepts:
 
 * [Persistent Volumes](http://kubernetes.io/docs/user-guide/persistent-volumes/) to define persistent disks (disk lifecycle not tied to the Pods).
-* [Services](http://kubernetes.io/docs/user-guide/services/) to enable Pods to locate one another.
-* [External Load Balancers](http://kubernetes.io/docs/user-guide/services/#type-loadbalancer) to expose Services externally.
+* [Services](https://kubernetes.io/docs/concepts/services-networking/service/) to enable Pods to locate one another.
+* [NodePort](http://kubernetes.io/docs/user-guide/services/#node-port) to expose Services externally.
 * [Deployments](http://kubernetes.io/docs/user-guide/deployments/) to ensure Pods stay up and running.
 * [Secrets](http://kubernetes.io/docs/user-guide/secrets/) to store sensitive passwords.
 
@@ -16,7 +16,7 @@ Demonstrated Kubernetes Concepts:
 
 Put your desired PostgreSQL and Waarp-R66 passwords in separated files called `postgres.password.txt` and `waarp-r66.password.txt` with no trailing newline. The first `tr` commands will remove the newline if your editor added one.
 
-**Note**: if your cluster enforces **selinux** and you will be using [Host Path](https://github.com/kubernetes/kubernetes/tree/master/examples/mysql-wordpress-pd#host-path) for storage, then please follow this [extra step](https://github.com/kubernetes/kubernetes/tree/master/examples/mysql-wordpress-pd#selinux).
+**Note**: if your cluster enforces **selinux** and you will be using [Host Path](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes#host-path) for storage, then please follow this [extra step](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes#selinux).
 
 ```bash
 # PostgreSQL and Waarp-R66 persistent volumes
@@ -37,21 +37,37 @@ kubectl create -f https://raw.githubusercontent.com/fjudith/docker-waarp-r66/mas
 
 Kubernetes runs in a variety of environments and is inherently modular. Not all clusters are the same. These are the requirements for this example.
 
-* Kubernetes version 1.2 is required due to using newer features, such at PV Claims and Deployments. Run `kubectl version` to see your cluster version.
+* Kubernetes version 1.2 is required due to using newer features, such as PV Claims and Deployments. Run `kubectl version` to see your cluster version.
 * [Cluster DNS](http://kubernetes.io/docs/user-guide/secrets/) will be used for service discovery.
-* An [external load balancer](http://kubernetes.io/docs/user-guide/services/#type-loadbalancer) will be used to access WordPress.
+* An [NodePort](http://kubernetes.io/docs/user-guide/services/#node-port) will be used to access Waarp-R66.
 * [Persistent Volume Claims](http://kubernetes.io/docs/user-guide/persistent-volumes/) are used. You must create Persistent Volumes in your cluster to be claimed. This example demonstrates how to create two types of volumes, but any volume is sufficient.
 
 Consult a [Getting Started Guide](http://kubernetes.io/docs/getting-started-guides/) to set up a cluster and the [kubectl](http://kubernetes.io/docs/user-guide/prereqs/) command-line client.
 
 ## Decide where you will store your data
 
-PostgreSQL and Waarp-R66 will each use aa [Persistent Volume](http://kubernetes.io/docs/user-guide/persistent-volumes/) to store their data. We will use a Persistent Volume Claim to claim an aivailable persistent volume. This example covers HostPath and NFS volumes. Choose one of the two, or see [Types of Persisten Volumes](http://kubernetes.io/docs/user-guide/persistent-volumes/#types-of-persistent-volumes) for more options.
+PostgreSQL and Waarp-R66 will each use [Persistent Volumes](http://kubernetes.io/docs/user-guide/persistent-volumes/) to store their data. We will use a Persistent Volume Claim to claim an aivailable persistent volume. Labels will be leveraged to provide static mapping from Volume Claim down to Persistent Volume. This example covers HostPath and NFS volumes. Choose one of the two, or see [Types of Persisten Volumes](http://kubernetes.io/docs/user-guide/persistent-volumes/#types-of-persistent-volumes) for more options.
 
 ### Host Path
 
 Host paths are volumes mapped to directories on the host. **These should be used for testing or single-node clusters only**.
 the data will not be moved between nodes if the pod is recreated on a new node. If the pod is deleted and recreated on a new node, **data will be lost**.
+
+#### Ownership and Permissions issues
+
+By default Host Path subdirectories are owned by the user running the Docker deamon (_i.e. root:root_) with MOD 755.
+This is a big issue for images that runs with a different user as per [Dockerfile Best Practices](https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/#user) as it will not have permissions to write.
+
+We have three options are available to solve this issue:
+
+1. **Change MOD** to `777`/`a+rwt` of the Persistent Volume directory. 
+   * Meaning all Pods or user accessing the node will also get read-write access to the data persisted
+2. **Build a deriving image that enforce root** (_e.g._ Add `USER root` to the Dockerfile).
+   * Requires you to maintain the image up-to-date.
+3. **Add a system user to the Node**, with the exact same `name`, `uid`, `gid` and change ownership of the Persistent Volume.
+   * Secure but requires more administrative effort (_i.e._ stateless run to identify user attributes, add user to the node, pre-create persistent volume path with appropriate ownership. Thus create the pod).
+
+We will use `option 3` in this guide.
 
 #### SELinux
 
@@ -61,12 +77,20 @@ On systems supporting selinux it is preferred to leave it _enabled/enforcing_. H
 ## on every node:
 sudo groupadd -r --gid 499 waarp && sudo useradd -ms /bin/bash --uid 499 --gid 499 waarp
 
-mkdir -m 777 -p /var/lib/kubernetes/pv \
-  /var/lib/kubernetes/pv/waarp-site1-etc
-  /var/lib/kubernetes/pv/waarp-site1-data
+sudo mkdir -p /var/lib/kubernetes/pv
+sudo chmod a+rwt /var/lib/kubernetes/pv
+
+sudo mkdir -p \
+  /var/lib/kubernetes/pv/waarp-site1-etc \
+  /var/lib/kubernetes/pv/waarp-site1-data \
   /var/lib/kubernetes/pv/waarp-site1-log
-chmod a+rwt /var/lib/kubernetes/pv  # match /tmp permissions
-chcon -Rt svirt_sandbox_file_t /var/lib/kubernetes/pv
+
+sudo chown -R waarp:waarp \
+  /var/lib/kubernetes/pv/waarp-site1-etc \
+  /var/lib/kubernetes/pv/waarp-site1-data \
+  /var/lib/kubernetes/pv/waarp-site1-log
+
+sudo chcon -Rt svirt_sandbox_file_t /var/lib/kubernetes/pv
 ```
 
 Continuing with host path, create the persistent volume objects in Kubernetes using [waarp-site1-persistentvolume.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-site1-persistentvolume.yaml):
