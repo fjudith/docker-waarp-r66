@@ -21,7 +21,6 @@ RUN yum install -y \
 
 RUN yum clean all
 
-
 # Download Waarp rpm package 3.0.8
 RUN curl https://dl.waarp.org/repos/rhel6/waarp-ctl-0.1.2-1.el6.x86_64.rpm -o /tmp/waarp-ctl.rpm
 RUN rpm --force -iv /tmp/waarp-ctl.rpm
@@ -72,7 +71,6 @@ COPY assets/init-functions /usr/share/waarp/
 COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 
-
 # Waarp ports
 EXPOSE 6666 6667
 
@@ -97,4 +95,3 @@ WORKDIR /usr/share/waarp
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # CMD ["bash"]
-
