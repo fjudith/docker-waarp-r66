@@ -50,6 +50,13 @@ RUN pushd /tmp/ && \
 	rm -rf /tmp/waarp-r66-{WAARP_R66_VERSION}* && \
 	popd
 
+# Add JDBC drivers
+RUN pushd /usr/share/waarp/r66-lib/ && \
+	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jre6.jar && \
+	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jre7.jar && \
+	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jar && \
+	popd
+
 ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
 
 # Waarp binaries and configuration files

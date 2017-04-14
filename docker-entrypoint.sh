@@ -23,6 +23,8 @@ export LOGCLIENT=" -Dlogback.configurationFile=${CONFDIR}/logback-client.xml "
 export JAVARUNCLIENT="${JAVA_RUN} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGCLIENT} "
 export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGSERVER} "
 
+export R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
+
 source /usr/share/waarp/init-commands.sh
 
 # Initializing Command Line Tools.
@@ -67,8 +69,9 @@ export WAARP_SNMP_PRIVPASS=${WAARP_SNMP_PRIVPASS:-"password"}
 echo $(date --rfc-3339=seconds) 'Deploying XML configuration files if required'
 
 if [ ! -f ${SERVER_CONFIG} ]; then
-	mkdir -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
-	cp -vn /tmp/conf.d/template/*.xml /etc/waarp/conf.d/${WAARP_APPNAME}/
+    mkdir -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
+    mkdir -p "/etc/waarp/certs"
+    cp -vn /tmp/conf.d/template/*.xml /etc/waarp/conf.d/${WAARP_APPNAME}/
 fi
 
 
@@ -232,6 +235,10 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_trust.jks" ]; then
     ${CLIENT_CONFIG}
 fi
 
+# REST API
+if [ ! -f "/etc/waarp/certs/restsigning.key" ]; then
+    cat /dev/urandom | head -c64 > /etc/waarp/certs/restsigning.key
+fi
 
 # Initializing Waarp SNMP file
 # --------------------------------------------------

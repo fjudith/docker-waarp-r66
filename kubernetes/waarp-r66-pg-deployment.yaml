@@ -5,14 +5,16 @@ metadata:
   labels:
     io.kompose.service: waarp-r66-pg
     app: waarp-r66
+    tiers: postgres
   name: waarp-r66-pg
 spec:
   ports:
-    - port: 5432
+  - name: "postgres"
+    port: 5432
+    targetPort: 5432
   selector:
     io.kompose.service: waarp-r66-pg
-status:
-  loadBalancer: {}
+    app: waarp-r66
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -28,6 +30,9 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  selector:
+    matchLabels:
+      io.kompose.service: waarp-site1-db
 status: {}
 ---
 apiVersion: v1
@@ -44,6 +49,9 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  selector:
+    matchLabels:
+      io.kompose.service: waarp-site1-dblog
 status: {}
 ---
 apiVersion: extensions/v1beta1
@@ -77,15 +85,16 @@ spec:
             secretKeyRef:
               name: postgres-pass
               key: postgres.password.txt
-
         ports:
         - containerPort: 5432
           name: postgres
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: waarp-site1-db
+          subPath: db
         - mountPath: /var/log/postgresql
           name: waarp-site1-dblog
+          subPath: dblog
       volumes:
       - name: waarp-site1-db
         persistentVolumeClaim:

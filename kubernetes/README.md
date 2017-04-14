@@ -6,8 +6,8 @@ This example describes how to run a persisten installation of [Waarp-R66](http:/
 Demonstrated Kubernetes Concepts:
 
 * [Persistent Volumes](http://kubernetes.io/docs/user-guide/persistent-volumes/) to define persistent disks (disk lifecycle not tied to the Pods).
-* [Services](http://kubernetes.io/docs/user-guide/services/) to enable Pods to locate one another.
-* [External Load Balancers](http://kubernetes.io/docs/user-guide/services/#type-loadbalancer) to expose Services externally.
+* [Services](https://kubernetes.io/docs/concepts/services-networking/service/) to enable Pods to locate one another.
+* [NodePort](http://kubernetes.io/docs/user-guide/services/#node-port) to expose Services externally.
 * [Deployments](http://kubernetes.io/docs/user-guide/deployments/) to ensure Pods stay up and running.
 * [Secrets](http://kubernetes.io/docs/user-guide/secrets/) to store sensitive passwords.
 
@@ -16,7 +16,7 @@ Demonstrated Kubernetes Concepts:
 
 Put your desired PostgreSQL and Waarp-R66 passwords in separated files called `postgres.password.txt` and `waarp-r66.password.txt` with no trailing newline. The first `tr` commands will remove the newline if your editor added one.
 
-**Note**: if your cluster enforces **selinux** and you will be using [Host Path](https://github.com/kubernetes/kubernetes/tree/master/examples/mysql-wordpress-pd#host-path) for storage, then please follow this [extra step](https://github.com/kubernetes/kubernetes/tree/master/examples/mysql-wordpress-pd#selinux).
+**Note**: if your cluster enforces **selinux** and you will be using [Host Path](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes#host-path) for storage, then please follow this [extra step](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes#selinux).
 
 ```bash
 # PostgreSQL and Waarp-R66 persistent volumes
@@ -37,21 +37,37 @@ kubectl create -f https://raw.githubusercontent.com/fjudith/docker-waarp-r66/mas
 
 Kubernetes runs in a variety of environments and is inherently modular. Not all clusters are the same. These are the requirements for this example.
 
-* Kubernetes version 1.2 is required due to using newer features, such at PV Claims and Deployments. Run `kubectl version` to see your cluster version.
+* Kubernetes version 1.2 is required due to using newer features, such as PV Claims and Deployments. Run `kubectl version` to see your cluster version.
 * [Cluster DNS](http://kubernetes.io/docs/user-guide/secrets/) will be used for service discovery.
-* An [external load balancer](http://kubernetes.io/docs/user-guide/services/#type-loadbalancer) will be used to access WordPress.
+* An [NodePort](http://kubernetes.io/docs/user-guide/services/#node-port) will be used to access Waarp-R66.
 * [Persistent Volume Claims](http://kubernetes.io/docs/user-guide/persistent-volumes/) are used. You must create Persistent Volumes in your cluster to be claimed. This example demonstrates how to create two types of volumes, but any volume is sufficient.
 
 Consult a [Getting Started Guide](http://kubernetes.io/docs/getting-started-guides/) to set up a cluster and the [kubectl](http://kubernetes.io/docs/user-guide/prereqs/) command-line client.
 
 ## Decide where you will store your data
 
-PostgreSQL and Waarp-R66 will each use aa [Persistent Volume](http://kubernetes.io/docs/user-guide/persistent-volumes/) to store their data. We will use a Persistent Volume Claim to claim an aivailable persistent volume. This example covers HostPath and NFS volumes. Choose one of the two, or see [Types of Persisten Volumes](http://kubernetes.io/docs/user-guide/persistent-volumes/#types-of-persistent-volumes) for more options.
+PostgreSQL and Waarp-R66 will each use [Persistent Volumes](http://kubernetes.io/docs/user-guide/persistent-volumes/) to store their data. We will use a Persistent Volume Claim to claim an aivailable persistent volume. Labels will be leveraged to provide static mapping from Volume Claim down to Persistent Volume. This example covers HostPath and NFS volumes. Choose one of the two, or see [Types of Persisten Volumes](http://kubernetes.io/docs/user-guide/persistent-volumes/#types-of-persistent-volumes) for more options.
 
 ### Host Path
 
 Host paths are volumes mapped to directories on the host. **These should be used for testing or single-node clusters only**.
 the data will not be moved between nodes if the pod is recreated on a new node. If the pod is deleted and recreated on a new node, **data will be lost**.
+
+#### Ownership and Permissions issues
+
+By default Host Path subdirectories are owned by the user running the Docker deamon (_i.e. root:root_) with MOD 755.
+This is a big issue for images that runs with a different user as per [Dockerfile Best Practices](https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/#user) as it will not have permissions to write.
+
+We have three options are available to solve this issue:
+
+1. **Change MOD** to `777`/`a+rwt` of the Persistent Volume directory. 
+   * Meaning all Pods or user accessing the node will also get read-write access to the data persisted
+2. **Build a deriving image that enforce root** (_e.g._ Add `USER root` to the Dockerfile).
+   * Requires you to maintain the image up-to-date.
+3. **Create user and group in the node**, with the exact same `name`, `uid`, `gid` and change ownership of the Persistent Volume.
+   * Secure but requires more administrative effort (_i.e._ stateless run to identify user attributes, add user to the node, pre-create persistent volume path with appropriate ownership. Thus create the pod).
+
+We will use `option 3` in this guide.
 
 #### SELinux
 
@@ -59,15 +75,28 @@ On systems supporting selinux it is preferred to leave it _enabled/enforcing_. H
 
 ```bash
 ## on every node:
-mkdir -p /var/lib/kubernetes/pv
-chmod a+rwt /var/lib/kubernetes/pv  # match /tmp permissions
-chcon -Rt svirt_sandbox_file_t /var/lib/kubernetes/pv
+sudo groupadd -r --gid 499 waarp && sudo useradd -ms /bin/bash --uid 499 --gid 499 waarp
+
+sudo mkdir -p /var/lib/kubernetes/pv
+sudo chmod a+rwt /var/lib/kubernetes/pv
+
+sudo mkdir -p \
+  /var/lib/kubernetes/pv/waarp-site1-etc \
+  /var/lib/kubernetes/pv/waarp-site1-data \
+  /var/lib/kubernetes/pv/waarp-site1-log
+
+sudo chown -R waarp:waarp \
+  /var/lib/kubernetes/pv/waarp-site1-etc \
+  /var/lib/kubernetes/pv/waarp-site1-data \
+  /var/lib/kubernetes/pv/waarp-site1-log
+
+sudo chcon -Rt svirt_sandbox_file_t /var/lib/kubernetes/pv
 ```
 
 Continuing with host path, create the persistent volume objects in Kubernetes using [waarp-site1-persistentvolume.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-site1-persistentvolume.yaml):
 
 ```bash
-export KUBE_REPO=https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes
+export KUBE_REPO=https://raw.githubusercontent.com/fjudith/docker-waarp-r66/master/kubernetes
 kubectl create -f $KUBE_REPO/waarp-site1-persistentvolume.yaml
 ```
 
@@ -137,7 +166,7 @@ Also in [waarp-r66-pg-deployment.yaml](https://github.com/fjudith/docker-waarp-r
 Up to this point one Deployment, one Pod, one PVC, one Service, one Endpoint, five PVs, and two Secrets have been created, shown below:
 
 ```bash
-kubectl get deployment,pod,svc,endpoints,pvc -l app=waarp -o wide && \
+kubectl get deployment,pod,svc,endpoints,pvc -l app=waarp-r66 -o wide && \
   kubectl get secret postgres-pass && \
   kubectl get pv
 ```
@@ -168,7 +197,7 @@ waarp-site1-etc     100Mi      RWO           Retain          Available          
 waarp-site1-log     2Gi        RWO           Retain          Bound       default/waarp-site1-db                               3m                     
 ```
 
-Deploy Waarp
+## Deploy Waarp
 
 Next deploy Waarp-R66 using [waarp-r66-deployment.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-r66-deployment.yaml):
 
@@ -182,12 +211,36 @@ The [Waarp-R66 image](https://hub.docker.com/u/fjudith/waarp-r66) accepts the da
 
 The Waarp-R66 service hase the setting `type: LoadBalancer`. This will set up the waarp-r66 servic behind an external IP.
 
-Find the external IP for your Waarp-R66 service. **It may take a minute to have an external IP assigned to the service , depending on your cluster environment**.
+Find the external IP and port for your Waarp-R66 service. **It may take a minute to have an external IP assigned to the service , depending on your cluster environment**.
+
+```
+kubectl get pod -o wide -l app=waarp-r66
+```
+
+```
+NAME                            READY     STATUS    RESTARTS   AGE       IP          NODE
+waarp-r66-79982725-bdvvr        1/1       Running   4          1h        10.2.94.8   172.17.4.201
+waarp-r66-pg-1179393831-nc0n3   1/1       Running   0          1h        10.2.94.7   172.17.4.201
+```
 
 ```bash
 kubectl get services waarp-r66
 ```
 
 ```
-merge
+NAME        CLUSTER-IP   EXTERNAL-IP   PORT(S)                                                                      AGE
+
+waarp-r66   10.3.0.214   <nodes>       6666:30174/TCP,6667:31364/TCP,8066:31167/TCP,8067:32057/TCP,8088:31061/TCP   42m
 ```
+
+# Visit your new Waarp-R66 MFT
+
+Now, we can visit ruuning Waarp-R66 app. Use the node IP running the waarp-r66 pod and the port mapped to `8067/TCP` you obtained above.
+
+```
+https://<node-ip>:<port>
+```
+
+You should see the familiar Waarp-R66 login page.
+
+![Waarp-R66 login page](https://github.com/fjudith/docker-waarp-r66/raw/master/kubernetes/Waarp.png)
