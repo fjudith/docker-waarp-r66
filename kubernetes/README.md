@@ -64,7 +64,7 @@ We have three options are available to solve this issue:
    * Meaning all Pods or user accessing the node will also get read-write access to the data persisted
 2. **Build a deriving image that enforce root** (_e.g._ Add `USER root` to the Dockerfile).
    * Requires you to maintain the image up-to-date.
-3. **Add a system user to the Node**, with the exact same `name`, `uid`, `gid` and change ownership of the Persistent Volume.
+3. **Create user and group in the node**, with the exact same `name`, `uid`, `gid` and change ownership of the Persistent Volume.
    * Secure but requires more administrative effort (_i.e._ stateless run to identify user attributes, add user to the node, pre-create persistent volume path with appropriate ownership. Thus create the pod).
 
 We will use `option 3` in this guide.
@@ -197,6 +197,10 @@ waarp-site1-etc     100Mi      RWO           Retain          Available          
 waarp-site1-log     2Gi        RWO           Retain          Bound       default/waarp-site1-db                               3m                     
 ```
 
-Deploy Waarp
+## Deploy Waarp
 
-Next deploy 
+Next deploy Waarp-R66 using [waarp-r66-deployment.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-r66-deployment.yaml):
+
+```bash
+kubectl create -f $KUBE_REPO/examples/mysql-wordpress-pd/wordpress-deployment.yaml
+```
