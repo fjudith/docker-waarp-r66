@@ -166,7 +166,7 @@ Also in [waarp-r66-pg-deployment.yaml](https://github.com/fjudith/docker-waarp-r
 Up to this point one Deployment, one Pod, one PVC, one Service, one Endpoint, five PVs, and two Secrets have been created, shown below:
 
 ```bash
-kubectl get deployment,pod,svc,endpoints,pvc -l app=waarp -o wide && \
+kubectl get deployment,pod,svc,endpoints,pvc -l app=waarp-r66 -o wide && \
   kubectl get secret postgres-pass && \
   kubectl get pv
 ```
@@ -202,5 +202,45 @@ waarp-site1-log     2Gi        RWO           Retain          Bound       default
 Next deploy Waarp-R66 using [waarp-r66-deployment.yaml](https://github.com/fjudith/docker-waarp-r66/tree/master/kubernetes/waarp-r66-deployment.yaml):
 
 ```bash
-kubectl create -f $KUBE_REPO/examples/mysql-wordpress-pd/wordpress-deployment.yaml
+kubectl create -f $KUBE_REPO/waarp-r66-deployment.yaml
 ```
+
+Here we are using many of the same features, such as volume claims for persistent storage and two secrets for passwords.
+
+The [Waarp-R66 image](https://hub.docker.com/u/fjudith/waarp-r66) accepts the database hostname through the environment variable `WAARP_DATABASE_URL`. We set the env value to the name of the PostgreSQL service we created: `waarp-r66-pg`.
+
+The Waarp-R66 service hase the setting `type: LoadBalancer`. This will set up the waarp-r66 servic behind an external IP.
+
+Find the external IP and port for your Waarp-R66 service. **It may take a minute to have an external IP assigned to the service , depending on your cluster environment**.
+
+```
+kubectl get pod -o wide -l app=waarp-r66
+```
+
+```
+NAME                            READY     STATUS    RESTARTS   AGE       IP          NODE
+waarp-r66-79982725-bdvvr        1/1       Running   4          1h        10.2.94.8   172.17.4.201
+waarp-r66-pg-1179393831-nc0n3   1/1       Running   0          1h        10.2.94.7   172.17.4.201
+```
+
+```bash
+kubectl get services waarp-r66
+```
+
+```
+NAME        CLUSTER-IP   EXTERNAL-IP   PORT(S)                                                                      AGE
+
+waarp-r66   10.3.0.214   <nodes>       6666:30174/TCP,6667:31364/TCP,8066:31167/TCP,8067:32057/TCP,8088:31061/TCP   42m
+```
+
+# Visit your new Waarp-R66 MFT
+
+Now, we can visit ruuning Waarp-R66 app. Use the node IP running the waarp-r66 pod and the port mapped to `8067/TCP` you obtained above.
+
+```
+https://<node-ip>:<port>
+```
+
+You should see the familiar Waarp-R66 login page.
+
+![Waarp-R66 login page](https://github.com/fjudith/docker-waarp-r66/raw/master/kubernetes/Waarp.png)
