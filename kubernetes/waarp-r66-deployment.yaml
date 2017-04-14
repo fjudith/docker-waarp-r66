@@ -26,7 +26,7 @@ spec:
     targetPort: 8088
   selector:
     io.kompose.service: waarp-r66
-  type: LoadBalancer
+  type: NodePort
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -119,7 +119,7 @@ spec:
         - name: WAARP_DATABASE_NAME
           value: site1-waarp
         - name: WAARP_DATABASE_USER
-          value: site1-waarp
+          value: waarp
         # $ kubectl create secret generic postgres-pass --from-file=postgres.password.txt
         # make sure postgres.password.txt does not have a trailing newline
         - name: WAARP_DATABASE_PASSWORD
@@ -128,7 +128,7 @@ spec:
               name: postgres-pass
               key: postgres.password.txt
         - name: WAARP_DATABASE_URL
-          value: jdbc:posgresql://waarp-r66-pg:5432/site1-waarp
+          value: jdbc:postgresql://waarp-r66-pg:5432/site1-waarp
         ports:
         - containerPort: 6666
           name: xfer
