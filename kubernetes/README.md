@@ -81,9 +81,9 @@ sudo mkdir -p /var/lib/kubernetes/pv
 sudo chmod a+rwt /var/lib/kubernetes/pv
 
 sudo mkdir -p \
-  /var/lib/kubernetes/pv/waarp-site1-etc\etc \
-  /var/lib/kubernetes/pv/waarp-site1-data\data \
-  /var/lib/kubernetes/pv/waarp-site1-log\log
+  /var/lib/kubernetes/pv/waarp-site1-etc/etc \
+  /var/lib/kubernetes/pv/waarp-site1-data/data \
+  /var/lib/kubernetes/pv/waarp-site1-log/log
 
 sudo chown -R waarp:waarp \
   /var/lib/kubernetes/pv/waarp-site1-etc \
