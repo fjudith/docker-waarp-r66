@@ -69,8 +69,8 @@ export WAARP_SNMP_PRIVPASS=${WAARP_SNMP_PRIVPASS:-"password"}
 echo $(date --rfc-3339=seconds) 'Deploying XML configuration files if required'
 
 if [ ! -f ${SERVER_CONFIG} ]; then
-    mkdir -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
-    mkdir -p "/etc/waarp/certs"
+    mkdir -v -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
+    mkdir -v -p "/etc/waarp/certs"
     cp -vn /tmp/conf.d/template/*.xml /etc/waarp/conf.d/${WAARP_APPNAME}/
 fi
 
@@ -79,16 +79,16 @@ fi
 # --------------------------------------------------
 echo $(date --rfc-3339=seconds) 'Initializing Directories.'
 
-mkdir -v /var/lib/waarp/${WAARP_APPNAME}
+mkdir -v -p "/var/lib/waarp/${WAARP_APPNAME}"
 
 # File Transfer directory 
-mkdir -v /var/lib/waarp/${WAARP_APPNAME}/xfer
+mkdir -v -p "/var/lib/waarp/${WAARP_APPNAME}/xfer"
 
 # File watcher dirctory
-mkdir -v /var/lib/waarp/${WAARP_APPNAME}/spool
+mkdir -v -p "/var/lib/waarp/${WAARP_APPNAME}/spool"
 
 # File watcher flags dirctory
-mkdir -v /var/lib/waarp/${WAARP_APPNAME}/flags
+mkdir -v -p "/var/lib/waarp/${WAARP_APPNAME}/flags"
 
 # Server
 xmlstarlet ed -P -S -L \
