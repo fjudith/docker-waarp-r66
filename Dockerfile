@@ -1,6 +1,6 @@
 FROM centos:6
 
-MAINTAINER Florian JUDITH <florian.judith.b@gmail.com>
+LABEL maintainer="Florian JUDITH <florian.judith.b@gmail.com>"
 
 # Create by Waarp RPMs
 # RUN groupadd --system --gid 499 waarp && \
