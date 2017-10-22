@@ -18,7 +18,7 @@ services:
 
 before_install:
   - docker build -f Dockerfile -t $REPO:$COMMIT .
-  - docker run --name 'postgres' -e PORSTGRES_DB=waarp -e POSTGRES_USER=waarp -e POSTGRES_PASSWORD=V3ry1ns3cur3P4ssw0rd posgres:9.4
+  - docker run --name 'postgres' -e PORSTGRES_DB=waarp -e POSTGRES_USER=waarp -e POSTGRES_PASSWORD=V3ry1ns3cur3P4ssw0rd postgres:9.4
   - docker run --name 'waarp-r66' -d --link postgres:postgres -p 6666:6667 -p 6667:6667 -p 8066:8066 -p 8067:8067 $REPO:$COMMIT
   - docker ps -a
 
