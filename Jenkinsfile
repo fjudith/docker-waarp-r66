@@ -61,7 +61,7 @@ pipeline {
                 // internal
                 sh "docker exec 'waarp-r66-${BUILD_NUMBER}' /bin/bash -c 'curl -i -X GET -L http://localhost:8066'"
                 // External
-                sh "docker run --rm --network waarp-r66-${BUILD_NUMBER} blitznote/debootstrap-amd64:17.04 bash -c 'curl -i -X GET -L http://${DOCKER_WAARP}:8067'"
+                sh "docker run --rm --network waarp-r66-${BUILD_NUMBER} blitznote/debootstrap-amd64:17.04 bash -c 'curl -ik -X GET -L https://${DOCKER_WAARP}:8067'"
             }
             post {
                 always {
