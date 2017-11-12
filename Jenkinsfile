@@ -67,8 +67,8 @@ pipeline {
             post {
                 always {
                     echo 'Remove slim stack'
-                    sh "docker rm -f waarp-r66-pg-${BUILD_NUMBER}"
-                    sh "docker rm -f waarp-r66-${BUILD_NUMBER}"
+                    sh "docker rm -vf waarp-r66-pg-${BUILD_NUMBER}"
+                    sh "docker rm -vf waarp-r66-${BUILD_NUMBER}"
                     sh "docker network rm waarp-r66-${BUILD_NUMBER}"
                 }
                 success {
