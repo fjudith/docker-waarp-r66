@@ -47,6 +47,7 @@ pipeline {
                 sleep 15
                 // Start application
                 sh "docker run -d --name 'waarp-r66-${BUILD_NUMBER}' --link waarp-r66-pg-${BUILD_NUMBER}:postgres --network waarp-r66-${BUILD_NUMBER} ${REPO}:${COMMIT}"
+                sh "docker exec 'waarp-r66-${BUILD_NUMBER}' /bin/bash -c 'export'"
                 // Get container ID
                 script{
                     DOCKER_WAARP    = sh(script: "docker ps -qa -f ancestor=${REPO}:${COMMIT}", returnStdout: true).trim()
