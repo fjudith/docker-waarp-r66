@@ -43,7 +43,7 @@ pipeline {
                 // Create Network
                 sh "docker network create waarp-r66-${BUILD_NUMBER}"
                 // Start database
-                sh "docker run -d --name 'waarp-r66-pg-${BUILD_NUMBER}' -e POSTGRES_USERNAME=waarp -e POSTGRES_PASSWORD=V3ry1nS3cur3 -e POSTGRES_DB=waarp --network waarp-r66-${BUILD_NUMBER} amd64/postgres:9.6"
+                sh "docker run -d --name 'waarp-r66-pg-${BUILD_NUMBER}' -e POSTGRES_USER=waarp -e POSTGRES_PASSWORD=V3ry1nS3cur3 -e POSTGRES_DB=waarp --network waarp-r66-${BUILD_NUMBER} amd64/postgres:9.6"
                 sleep 15
                 // Start application
                 sh "docker run -d --name 'waarp-r66-${BUILD_NUMBER}' --link waarp-r66-pg-${BUILD_NUMBER}:postgres --network waarp-r66-${BUILD_NUMBER} ${REPO}:${COMMIT}"
@@ -56,7 +56,8 @@ pipeline {
         stage ('Test Waarp R66'){
             agent { label 'docker' }
             steps {
-                sleep 180 
+                sleep 120
+                sh "docker logs waarp-r66-${BUILD_NUMBER}" 
                 // internal
                 sh "docker exec 'waarp-r66-${BUILD_NUMBER}' /bin/bash -c 'curl -i -X GET -L http://localhost:8066'"
                 // External
