@@ -56,7 +56,7 @@ pipeline {
         stage ('Test Waarp R66'){
             agent { label 'docker' }
             steps {
-                sleep 120
+                sleep 30
                 sh "docker logs waarp-r66-${BUILD_NUMBER}" 
                 // internal
                 sh "docker exec 'waarp-r66-${BUILD_NUMBER}' /bin/bash -c 'curl -i -X GET -L http://localhost:8066'"
