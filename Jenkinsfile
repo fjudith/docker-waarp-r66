@@ -57,7 +57,7 @@ pipeline {
             agent { label 'docker' }
             steps {
                 sleep 30
-                sh "docker logs waarp-r66-${BUILD_NUMBER}" 
+                input 'Start testins ?'
                 // internal
                 sh "docker exec 'waarp-r66-${BUILD_NUMBER}' /bin/bash -c 'curl -i -X GET -L http://localhost:8066'"
                 // External
