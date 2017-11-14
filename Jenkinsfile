@@ -46,7 +46,7 @@ pipeline {
                 sh "docker run -d --name 'waarp-r66-pg-${BUILD_NUMBER}' -e PORSTGRES_DB=waarp -e POSTGRES_USER=waarp -e POSTGRES_PASSWORD=V3ry1ns3cur3P4ssw0rd --network waarp-r66-${BUILD_NUMBER} postgres:9.4"
                 sleep 60
                 // Start application
-                sh "docker run -d --name 'waarp-r66-${BUILD_NUMBER}' --link waarp-r66-pg-${BUILD_NUMBER}:postgres --network waarp-r66-${BUILD_NUMBER} ${REPO}:${COMMIT}"
+                sh "docker run -d --name 'waarp-r66-${BUILD_NUMBER}' --link waarp-r66-pg-${BUILD_NUMBER}:postgres  ${REPO}:${COMMIT}"
                 // Get container ID
                 script{
                     DOCKER_WAARP    = sh(script: "docker ps -qa -f ancestor=${REPO}:${COMMIT}", returnStdout: true).trim()
