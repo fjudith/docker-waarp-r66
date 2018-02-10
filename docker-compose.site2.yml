@@ -1,21 +1,20 @@
-# File used for CI/CD Pipeline only
 version: '2.1'
 volumes:
-  waarp-site1-dblog:
-  waarp-site1-etc:
-  waarp-site1-log:
-  waarp-site1-data:
-  waarp-site1-db:
+  waarp-site2-dblog:
+  waarp-site2-etc:
+  waarp-site2-log:
+  waarp-site2-data:
+  waarp-site2-db:
 services:
   postgres:
-    image: postgres:9.4
+    image: postgres
     environment:
-      POSTGRES_DB: waarp-site1
+      POSTGRES_DB: waarp-site2
       POSTGRES_PASSWORD: V3ry1nS3cur3P4ssw0rd
       POSTGRES_USER: waarp
     volumes:
-    - waarp-site1-db:/var/lib/postgresql/data
-    - waarp-site1-dblog:/var/log/postgresql
+    - waarp-site2-db:/var/lib/postgresql/data
+    - waarp-site2-dblog:/var/log/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 30s
@@ -26,22 +25,22 @@ services:
     image: fjudith/waarp-r66:3.0.9
     environment:
       WAARP_ADMIN_PASSWORD: V3ry1nS3cur3P4ssw0rd
-      WAARP_APPNAME: site1
+      WAARP_APPNAME: site2
       WAARP_DATABASE_TYPE: postgresql
       WAARP_DATABASE_HOST: postgres
       WAARP_DATABASE_USERNAME: waarp
       WAARP_DATABASE_PASSWORD: V3ry1nS3cur3P4ssw0rd
-      WAARP_DATABASE_NAME: waarp-site1
+      WAARP_DATABASE_NAME: waarp-site2
     volumes:
-    - waarp-site1-etc:/etc/waarp
-    - waarp-site1-data:/var/lib/waarp
-    - waarp-site1-log:/var/log/waarp
+    - waarp-site2-etc:/etc/waarp
+    - waarp-site2-data:/var/lib/waarp
+    - waarp-site2-log:/var/log/waarp
     depends_on:
       postgres:
         condition: service_healthy
     ports:
-    - 6666:6666/tcp
-    - 6667:6667/tcp
-    - 8066:8066/tcp
-    - 8067:8067/tcp
-    - 8088:8088/tcp
+    - 6676:6666/tcp
+    - 6677:6667/tcp
+    - 8076:8066/tcp
+    - 8077:8067/tcp
+    - 8078:8088/tcp

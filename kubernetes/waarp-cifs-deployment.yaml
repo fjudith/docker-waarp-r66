@@ -59,9 +59,9 @@ spec:
         - name: WORKGROUP
           value: EXAMPLE
         - name: AD_PASSWORD
-          value: Dj43l1ss.01
+          value: V3ry1ns3cur3P4ssw0rd
         - name: AD_USERNAME
-          value: fjudith
+          value: DomainUser
         - name: ADMIN_SERVER
           value: dc1.example.com dc2.example.com
         - name: DOMAIN_NAME

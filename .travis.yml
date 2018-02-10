@@ -6,7 +6,6 @@ env:
   - TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
   # Retreive commit ID
   - COMMIT=${TRAVIS_COMMIT::8}
-  - secure: "dz4SLKcZ+apYygXyRGXir4R8vRgTBc/9E7sAs+NmpCl41XWIdIWl/4NxCzXOVOUbyPE3Wpv7L+ojSAogUT6Un8bONBu1ZcTnEjfjOtOZ/EdTcZGi19LmXP3DKCy0XeMROl5ZYb3eGYlRrARNl/q3gA74WnYGltLzhWBUvwKgiQzNjR3RjZI/j33HhyKTX7kpvYLh7Y6rw5sJhYxBbtDwkR+hGpZ5FLA4fWjzIgerHLpXdtDmFgOA6bH0gBoyWFEAlnNYY1lbFSvks3pJWdguoSORBtKsKMiKYDNbivx4v7eTD5gCQU47kFo6Z1E5FSPxt2p+ej7mq+JJ9lqvekoff5y0MH9jrg0/yHCXFCQdKHwsXl2dbRxp37m422I0pVMz4uQUQiUBLUGKIO9LKvtPpsVZKgKs6lbz3sAyirqrnJtKs9t5zRbjo3aNk1emtuLvT2B1xwMkuW+y4AEYNovyqqYQLrE0eWKpciXNne0BG9qPsQ4W3BN1/oSPKRjxvDb8bJx+xrZdVSz47Fby5lvbGPuYwDcg86tO+2Qfd67awubc72UdgexjYr59FBDbldB3TuNv0YUvJWnQzpSjb5qyOtZEuRQjspZk1HLgxkd/+YyGD9s1Dsn1mnNIPeHwvh8hLE+m6AGDPjSD2cfx25IOvqvxlR+QVoE0bdGrEV4t3W0="
   - secure: "RD+XFBmBd8KOknCfhFVcNBnLiSFPusp+uWcY40hoeNTYfjE/E9wislfBccE5C+rmTdOIWKYuX4bdtjpzpFgwqcBFIO9sdX01aHKCbyNZjGyhl4ZgChE61wLEFjpcIZ+QCoPEVA2jnU7UpIOtz1aGuYim7VlGhGoqAOyd/ew1O9sTgw19RYQolF51Sb9EBauOH66TY3AUeVZ1AQ9Pdd6V34KIa7QD+/J9XF82NxPh50CJ4vWa0cw4vIFwZSxphJvjQj++8JGTZf4UrrvSBg3JeflNqP43DqsgqWuxdVEjQt/Dm2MuRvtddSXez+SwLKnaQlW9/48YIqPG+j2SHb0zlb8qyGYDpDRI0WUwKbXw9SVJQIxK/LPEXSaMvVaJPcpIdO1nE4W0UVg1ZH7QDoZpLhewxq/KSrWeWtS/qJeWfHPgzFJXzXeBgVCig+GNHZvPShtNDHGC49ZZyjJgCna4doRaCyPRJV8lE49jHi36jF7OGzWPPKYXG+q9C8y5oq3/fKQJyRNcyOC+Yg7iss2rvnhOQSVInKMplRcNylbGTGHpGnWxrQR9kjLNlEgTqP4V7CHMZJhbRkK2PEQfnAPUPWkNK7wwzrbnLYsrhR0mBv/6+PgVjxPo3v9lUgY+OeNdenUSMlRzX9bFFzXzAhvMVDjDsGe4D51QIyz3rdnSRLI="
   - secure: "WwCy/feoLggcFhUpFrLY+b6EFAUgU5uSa/Zr0ZUaoMJmADVTyM9rNQdzN/oQXrIe9RJ0vLV52dnX5VIAvILX5l7OzffUqWLA4Dl/OwofOmbhouB7TCxlgw3JRZLPVVGYxOW2xBaUXz3vlxqQ6DXpPRM1yxi3ENf/uA+P3p8LqtoIicAtRKoNc8UYg1p3nAVotlXUAPm5a3sAkppNa2Mvt2vFbicdylCwhtjjL3Y1FtGfpARoT28js635rCNyOCBTWjYocD7Vryj6iBBoNB3mG/lTOob/wV+QbNfj1Zclw2yxTV/tZkmaaQmF/hgjGiOaQV4gGTZ0brAQ8o4fldmjvJrWHDJo4vKOtHsZEuxMaLMXGTryWtMfSCnPj7RaTPD3m3IPUOPvM3JVqn6uMfCc5y8MxBmfzO7cR20CB6qJoFA9sykb142dq+DXi2jV/dSkSmN/hhyeHfj3fpR1sxsdtQ12sZD17JmV8XgpaCLND875rgGRZ0lT9kMvaKaAncqpRyAjahyTOSIaSATL6UcutGwjrlc5T87T8zcypoVPJzij1iy2Pk2uCMqdA6mgSRqm+2/Rw+wvpB0xNYzp9ZcJiItLqNLRns8wYxhH6i7/B5UNRqZZtbpKgLkbppO56jn2OoXDA+mYxb98G1s9mTIPDscfClSFd8GBnPNIXPf7EVA="
 
@@ -17,23 +16,23 @@ services:
 
 
 before_install:
-  - docker build -f Dockerfile -t $REPO:$COMMIT .
-  - docker run --name 'postgres' -e PORSTGRES_DB=waarp -e POSTGRES_USER=waarp -e POSTGRES_PASSWORD=V3ry1ns3cur3P4ssw0rd posgres:9.4
-  - docker run --name 'waarp-r66' -d --link postgres:postgres -p 6666:6667 -p 6667:6667 -p 8066:8066 -p 8067:8067 $REPO:$COMMIT
+  - docker-compose -f .\docker-compose.yml -p waarp1 up --build -d --force-recreate
+  - docker-compose -f .\docker-compose.site2.yml -p waarp2 up --build -d --force-recreate
   - docker ps -a
 
 
 script:
-  # Wait for draw.io to start
+  # Wait for Waarp-R66 to start
   - sleep 20
   - docker logs waarp-r66
   # -i, --include – include protocol headers in the output (H/F)
   # -X, --request – specify request  COMMAND (GET, PUT, DELETE…)  to use
-  - docker exec waarp-r66 /bin/bash -c "curl -i http://localhost:8082"
+  - docker exec waarp-r66 /bin/bash -c "curl -i http://localhost:8066"
+  - docker exec waarp-r66 /bin/bash -c "curl -i http://localhost:8076"
 
 
 after_success:
-  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
   - docker tag $REPO:$COMMIT $REPO:$TAG
   - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
   - docker push $REPO

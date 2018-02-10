@@ -36,5 +36,6 @@
     <dbserver>jdbc:h2:/var/lib/waarp/server/db/waarp;MODE=ORACLE;AUTO_SERVER=TRUE</dbserver>
     <dbuser>waarp</dbuser>
     <dbpasswd>waarp</dbpasswd>
+    <dbcheck>false</dbcheck>
   </db>
 </config>

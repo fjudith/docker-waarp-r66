@@ -3,22 +3,24 @@
     <hostid>server</hostid>
     <sslhostid>server-ssl</sslhostid>
     <cryptokey></cryptokey>
-    <authentfile>/etc/waarp/conf.d/server1/OpenR66-authent.xml</authentfile>
+    <authentfile>/etc/waarp/conf.d/server1/authent-server.xml</authentfile>
   </identity>
   <server>
     <serveradmin>admin</serveradmin>
     <serverpasswd></serverpasswd>
     <usenossl>true</usenossl>
     <usessl>true</usessl>
+    <usehttpcomp>False</usehttpcomp>
+    <uselocalexec>False</uselocalexec>
     <httpadmin>/usr/share/waarp/r66-admin</httpadmin>
     <admkeypath>/etc/waarp/certs/adminkey.jks</admkeypath>
     <admkeystorepass>password</admkeystorepass>
     <admkeypass>password</admkeypass>
     <checkaddress>False</checkaddress>
     <checkclientaddress>False</checkclientaddress>
-    <multiplemonitors>1</multiplemonitors>
     <pastlimit>86400000</pastlimit>
     <minimaldelay>5000</minimaldelay>
+    <multiplemonitors>1</multiplemonitors>
     <snmpconfig></snmpconfig>
   </server>
   <network>
@@ -86,6 +88,7 @@
     <dbserver>jdbc:h2:/var/lib/waarp/server/db/waarp;MODE=ORACLE;AUTO_SERVER=TRUE</dbserver>
     <dbuser>waarp</dbuser>
     <dbpasswd>waarp</dbpasswd>
+    <dbcheck>false</dbcheck>
   </db>
   <business>
     <businessid>server</businessid>
