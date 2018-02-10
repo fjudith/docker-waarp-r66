@@ -16,8 +16,8 @@ services:
 
 
 before_install:
-  - docker-compose -f .\docker-compose.yml -p waarp1 up --build -d --force-recreate
-  - docker-compose -f .\docker-compose.site2.yml -p waarp2 up --build -d --force-recreate
+  - docker-compose -f ./docker-compose.yml -p waarp1 up --build -d --force-recreate
+  - docker-compose -f ./docker-compose.site2.yml -p waarp2 up --build -d --force-recreate
   - docker ps -a
 
 
