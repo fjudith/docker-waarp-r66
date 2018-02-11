@@ -366,11 +366,4 @@ echo $(date --rfc-3339=seconds) ------------------------------------------------
 echo $(date --rfc-3339=seconds) 
 echo $(date --rfc-3339=seconds) 'Waarp init process completed; ready for start up.'
 echo $(date --rfc-3339=seconds) --------------------------------------------------
-
-cat /etc/waarp/conf.d/${WAARP_APPNAME}/server.xml
-
-cat /usr/bin/waarp-r66server
-ls -lh /usr/share/waarp/
-cat /usr/share/waarp/variables.sh
-
 /usr/bin/waarp-r66server ${WAARP_APPNAME} start

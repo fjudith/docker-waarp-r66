@@ -18,14 +18,14 @@ services:
 before_install:
   - docker-compose -f ./docker-compose.yml -p waarp1 up --build -d --force-recreate
   - docker-compose -f ./docker-compose.site2.yml -p waarp2 up --build -d --force-recreate
-  - docker ps -a
   - WAARP1_CONTAINERID=$(docker ps -qa -f name="waarp1_waarp-r66_1")
-  - WARRP2_CONTAINERID=$(docker ps -qa -f name="waarp2_waarp-r66_1")
+  - WAARP2_CONTAINERID=$(docker ps -qa -f name="waarp2_waarp-r66_1")
 
 
 script:
   # Wait for Waarp-R66 to start
   - sleep 20
+  - docker ps -a
   - docker logs ${WAARP1_CONTAINERID} 
   - docker logs ${WAARP2_CONTAINERID} 
   # -i, --include – include protocol headers in the output (H/F)
