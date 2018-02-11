@@ -31,7 +31,9 @@ script:
   # -i, --include – include protocol headers in the output (H/F)
   # -X, --request – specify request  COMMAND (GET, PUT, DELETE…)  to use
   - docker exec ${WAARP1_CONTAINERID} /bin/bash -c "curl -i http://localhost:8066"
-  - docker exec ${WAARP2_CONTAINERID} /bin/bash -c "curl -i http://localhost:8076"
+  - docker exec ${WAARP2_CONTAINERID} /bin/bash -c "curl -i http://localhost:8066"
+  - curl -ikL https://localhost:8066
+  - curl -ikL https://localhost:8076
 
 
 after_success:
