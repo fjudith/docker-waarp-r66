@@ -67,7 +67,7 @@ Default Database type is `H2`.
 If the container is linked to a Mysql or PosgreSQL database, password and username are automatically sets.
 
 * **WAARP_DATABASE_TYPE**: Database type, on of h2, mysql, postgresql, default=`h2`
-* **WAARP_DATBASE_NAME**: Database name. default=`${WAARP_APPNAME}_waarp`
+* **WAARP_DATABASE_NAME**: Database name. default=`${WAARP_APPNAME}_waarp`
 * **WAARP_DATABASE_USER**: Database username. default=`waarp`
 * **WAARP_DATABASE_PASSWORD**: Database password. default=`waarp`
 * **WAARP_DATABASE_URL**: Database URL. default=`jdbc:${WAARP_DATABASE_TYPE}:/var/lib/waarp/${WAARP_APPNAME}/db/${WAARP_DATABASE_NAME};MODE=ORACLE;AUTO_SERVER=TRUE`
