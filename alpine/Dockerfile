@@ -12,20 +12,20 @@ RUN mkdir -p \
     /usr/share/waarp \
     /var/lib/waarp
 
-RUN pushd /tmp/ && \
+RUN cd /tmp/ && \
 	curl -L https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_VERSION}-1.linux.tar.gz | tar xvzf - && \
 	cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/etc/* /etc/waarp/ && \
     cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/share/* /usr/share/waarp/ && \
     cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/bin/* /usr/bin/ && \
 	rm -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1 && \
-	popd
+	cd /
 
 # Add JDBC drivers
-RUN pushd /usr/share/waarp/r66-lib/ && \
+RUN cd /usr/share/waarp/r66-lib/ && \
 	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jre6.jar && \
 	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jre7.jar && \
 	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jar && \
-	popd
+	cd /
 
 ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
 
