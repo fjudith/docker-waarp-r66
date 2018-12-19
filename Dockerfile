@@ -3,7 +3,6 @@ FROM amd64/centos:6
 LABEL maintainer="Florian JUDITH <florian.judith.b@gmail.com>"
 
 ENV WAARP_R66_VERSION=3.0.10
-ENV WAARP_R66_ZIP_VERSION=3.0.9
 
 RUN yum update -y
 RUN yum install -y epel-release
@@ -25,10 +24,9 @@ RUN rm -f /tmp/waarp*.rpm
 
 # Update Waarp Web administration UI
 RUN pushd /tmp/ && \
-	curl -O https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_ZIP_VERSION}-2.zip && \
-	unzip -x /tmp/waarp-r66-${WAARP_R66_ZIP_VERSION}.zip -d /tmp/ && \
-	cp -rf /tmp/waarp-r66-${WAARP_R66_ZIP_VERSION}/httpadmin/* /usr/share/waarp/r66-admin/ && \
-	rm -rf /tmp/waarp-r66-{WAARP_R66_ZIP_VERSION}* && \
+	curl -L https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_VERSION}-1.linux.tar.gz | tar xvzf - && \
+	cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/httpadmin/* /usr/share/waarp/r66-admin/ && \
+	rm -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1 && \
 	popd
 
 # Add JDBC drivers
