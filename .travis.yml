@@ -3,7 +3,8 @@ env:
   # Docker Repository
   - REPO=fjudith/waarp-r66
   # Compute docker tag
-  - TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo ${TRAVIS_BRANCH} ; fi`
+  - ALPINE_TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "alpine"; else echo ${TRAVIS_BRANCH}-alpine ; fi`
   # Retreive commit ID
   - COMMIT=${TRAVIS_COMMIT::8}
   - secure: "Q+DT89N4kqFgeCZVFqH60FNazQSPMp9s94/Mn+/o2OKQOrZHxP7tnQoNDspkSbZaZ4oprqKigxLJdHQGiR4Y+3ado76q4YLsJsqshrnjgn/oZhyg6D/sPO4Y4dVzwCGyXNSkyei7PIkCWEspTIU6UTgf/G5VgzbS6tdlw23Jot+UofGKbQzhdh7Robe1wTHemmNyjuz1zF6aFg/FWCDZZjAbsLueuXDJfdeRIlPKh4nVfCEbBODKSg0JjuY8NaeafoVCEj/6nfpIwXrUTxAJG/Z1HOey/m9eAIGhttXxX1+w/tWIABOJm5N56ufG5biCebcQ6epT514AK+ZvQGgqyVPunSOQvnLYShc+bXACH6nVQSCqs5RtgsB5N1GghIpNgcGEXSNP1vZkK/YfypHe9F5p6AEtPprPmQXVGs4VpS4pzCKDUHSlQ6hOsEeP1iSZGW8JLBqW8Ns06U4v5ffasQnrNTQ4zjwsMZT5+E5gpEfvU7U5DnhWcwtREa4E6p4t2tcrEyjMxXBS5xhGYsCyehdJv9HNorOJ+60KXa51jDut4GmCTihmZMBlo3PyHYuB/j0/z9aYenaeTwmzVQouR7umOmUtl/lzpRTTdxfV9DQftu77kH7lwm7QUXNtG6j6pYzJQlcwXgTaosCfXAin/Kk0faeL0AxzN6BggKfSRWU="
@@ -15,8 +16,8 @@ services:
 
 
 before_install:
-  - pushd ./alpine/ && docker-compose -f ./docker-compose.yml -p waarp1 up --build -d --force-recreate && popd
-  - pushd ./centos/ && docker-compose -f ./docker-compose.yml -p waarp2 up --build -d --force-recreate && popd
+  - pushd ./centos/ && docker-compose -f ./docker-compose.yml -p waarp1 up --build -d --force-recreate && popd
+  - pushd ./alpine/ && docker-compose -f ./docker-compose.yml -p waarp2 up --build -d --force-recreate && popd
   - WAARP1_CONTAINERID=$(docker ps -qa -f name="waarp1_waarp-r66_1")
   - WAARP2_CONTAINERID=$(docker ps -qa -f name="waarp2_waarp-r66_1")
 
@@ -34,7 +35,7 @@ script:
 
 
 after_success:
-  - docker login -u $DOCKER_USER -p $DOCKER_PASS
-  - docker tag $REPO:$COMMIT $REPO:$TAG
-  - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+  - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+  - docker tag ${REPO}:${TAG} ${REPO}:travis-${TRAVIS_BUILD_NUMBER}
+  - docker tag ${REPO}:${ALPINE_TAG} ${REPO}:travis-${TRAVIS_BUILD_NUMBER}-alpine
   - docker push $REPO
