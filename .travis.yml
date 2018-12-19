@@ -15,10 +15,8 @@ services:
 
 
 before_install:
-  - pushd ./deploy/docker/
-  - docker-compose -f ./docker-compose.yml -p waarp1 up --build -d --force-recreate
-  - docker-compose -f ./docker-compose.alpine.yml -p waarp2 up --build -d --force-recreate
-  - popd
+  - pushd ./alpine/ && docker-compose -f ./docker-compose.yml -p waarp1 up --build -d --force-recreate && popd
+  - pushd ./centos/ && docker-compose -f ./docker-compose.alpine.yml -p waarp2 up --build -d --force-recreate && popd
   - WAARP1_CONTAINERID=$(docker ps -qa -f name="waarp1_waarp-r66_1")
   - WAARP2_CONTAINERID=$(docker ps -qa -f name="waarp2_waarp-r66_1")
 

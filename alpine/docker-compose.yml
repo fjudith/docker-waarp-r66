@@ -21,7 +21,7 @@ services:
       timeout: 30s
       retries: 3
   waarp-r66:
-    build: ../alpine/
+    build: ./
     image: fjudith/waarp-r66:3.0.10-alpine
     environment:
       WAARP_ADMIN_PASSWORD: V3ry1nS3cur3P4ssw0rd
