@@ -66,7 +66,7 @@ RUN chown -R waarp:waarp \
  	/usr/share/waarp/ \
  	/var/lib/waarp/
 
-RUN chown +x \
+RUN chmod +x \
  	/usr/bin/manager-send.sh \
     /usr/bin/variables.sh \
     /usr/bin/waarp-password.sh \
