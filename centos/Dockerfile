@@ -22,13 +22,6 @@ RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-${WAARP_R66_VERSION}-1.el6.n
 
 RUN rm -f /tmp/waarp*.rpm
 
-# Update Waarp Web administration UI
-RUN pushd /tmp/ && \
-	curl -L https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_VERSION}-1.linux.tar.gz | tar xvzf - && \
-	cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/httpadmin/* /usr/share/waarp/r66-admin/ && \
-	rm -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1 && \
-	popd
-
 # Add JDBC drivers
 RUN pushd /usr/share/waarp/r66-lib/ && \
 	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jre6.jar && \
