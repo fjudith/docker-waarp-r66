@@ -36,7 +36,7 @@ source /usr/share/waarp/init-commands.sh
 # to interact with Waarp engine.
 # e.g initialize database, submit/list transfer requests.
 # --------------------------------------------------
-echo $(date --rfc-3339=seconds) 'Initializing Waarp command line tools'
+echo $(date -Iseconds) 'Initializing Waarp command line tools'
 
 #source /usr/share/waarp/variables.sh
 
@@ -92,7 +92,7 @@ export WAARP_SNMP_PRIVPASS=${WAARP_SNMP_PRIVPASS:-"password"}
 # Copy the configuration from Template,
 # if not already customized
 # --------------------------------------------------
-echo $(date --rfc-3339=seconds) 'Deploying XML configuration files if required'
+echo $(date -Iseconds) 'Deploying XML configuration files if required'
 
 if [ ! -f ${SERVER_CONFIG} ]; then
     mkdir -v -p "/etc/waarp/conf.d/${WAARP_APPNAME}"
@@ -103,7 +103,7 @@ fi
 
 # Initializing Directories.
 # --------------------------------------------------
-echo $(date --rfc-3339=seconds) 'Initializing Directories.'
+echo $(date -Iseconds) 'Initializing Directories.'
 
 mkdir -v -p "/var/lib/waarp/${WAARP_APPNAME}"
 
@@ -131,7 +131,7 @@ ${CLIENT_CONFIG}
 # Update password if key already exists.
 # --------------------------------------------------
 if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" ]; then
-	echo $(date --rfc-3339=seconds) 'Initializing Waarp password file'
+	echo $(date -Iseconds) 'Initializing Waarp password file'
 	WAARP_CRYPTED_PASSWORD=$(
     	java -cp "${R66_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
 	    -des -ko "/etc/waarp/certs/cryptokey.des" \
@@ -139,7 +139,7 @@ if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}-admin-passwd.ggp" ]; then
 	    grep "CryptedPwd:" | sed 's#CryptedPwd\:\s##g' \
 	)
 else
-	echo $(date --rfc-3339=seconds) 'Updating Waarp password file'
+	echo $(date -Iseconds) 'Updating Waarp password file'
 	WAARP_CRYPTED_PASSWORD=$(
     	java -cp "${R66_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
 	    -des -ki "/etc/waarp/certs/cryptokey.des" \
@@ -168,7 +168,7 @@ ${CLIENT_CONFIG}
 
 # Initializing Waarp authentication XML file.
 # --------------------------------------------------
-echo $(date --rfc-3339=seconds) 'Initializing Waarp authentication XML file'
+echo $(date -Iseconds) 'Initializing Waarp authentication XML file'
 
 if [ ! -f "/etc/waarp/conf.d/${WAARP_APPNAME}/authent-server.xml" ]; then
     echo '<?xml version="1.0" encoding="UTF-8"?><authent xmlns:x0="http://www.w3.org/2001/XMLSchema"></authent>' | xmlstarlet ed \
@@ -192,11 +192,11 @@ fi
 
 # Initializing Waarp SSL
 # --------------------------------------------------
-echo $(date --rfc-3339=seconds) 'Initializing Waarp SSL'
+echo $(date -Iseconds) 'Initializing Waarp SSL'
 
 # Admin
 if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_admkey.jks" ]; then
-    echo $(date --rfc-3339=seconds) "Generating admin key"
+    echo $(date -Iseconds) "Generating admin key"
     
     keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEYALG} \
     -sigalg ${WAARP_SIGALG} -validity "${WAARP_KEYVAL}" \
@@ -215,7 +215,7 @@ fi
 
 # Server
 if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_server.jks" ]; then
-    echo $(date --rfc-3339=seconds) "Generating server key"
+    echo $(date -Iseconds) "Generating server key"
     
     keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEYALG} \
     -sigalg ${WAARP_SIGALG} -validity "${WAARP_KEYVAL}" \
@@ -240,7 +240,7 @@ fi
 
 # Trust
 if [ ! -f "/etc/waarp/certs/${WAARP_APPNAME}_trust.jks" ]; then
-    echo $(date --rfc-3339=seconds) "Generating trust key"
+    echo $(date -Iseconds) "Generating trust key"
     
     keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEYALG} \
     -sigalg ${WAARP_SIGALG} -validity "${WAARP_KEYVAL}" \
@@ -268,7 +268,7 @@ fi
 
 # Initializing Waarp SNMP file
 # --------------------------------------------------
-echo $(date --rfc-3339=seconds) 'Initializing Waarp SNMP file'
+echo $(date -Iseconds) 'Initializing Waarp SNMP file'
 
 xmlstarlet ed -P -S -L \
 -u "/config/server/snmpconfig" -v "/etc/waarp/conf.d/${WAARP_APPNAME}/snmpconfig.xml" \
@@ -279,12 +279,12 @@ xmlstarlet ed -P -S -L \
 -u "/snmpconfig/securities/security/securityprivpass" -v ${WAARP_SNMP_PRIVPASS} \
 /etc/waarp/conf.d/${WAARP_APPNAME}/snmpconfig.xml
 
-echo $(date --rfc-3339=seconds) 'Initializing Waarp Database'
+echo $(date -Iseconds) 'Initializing Waarp Database'
 
 # Initializing Waarp MySQL Database
 # --------------------------------------------------
 if [ ! -z ${MYSQL_ENV_GOSU_VERSION} ]; then
-    echo $(date --rfc-3339=seconds) "Database engine is MySQL/MariaDB"
+    echo $(date -Iseconds) "Database engine is MySQL/MariaDB"
     
     WAARP_DATABASE_TYPE='mysql'
     WAARP_DATABASE_USER=${MYSQL_ENV_MYSQL_USER:-root}
@@ -310,7 +310,7 @@ fi
 # Initializing Waarp PosgreSQL Database
 # --------------------------------------------------
 if [ ! -z ${POSTGRES_ENV_GOSU_VERSION}  ]; then
-    echo $(date --rfc-3339=seconds) "Database engine is PostgreSQL"
+    echo $(date -Iseconds) "Database engine is PostgreSQL"
    
     WAARP_DATABASE_TYPE='postgresql'
     WAARP_DATABASE_USER=${POSTGRES_ENV_POSTGRES_USER:-root}
@@ -350,20 +350,20 @@ ${CLIENT_CONFIG}
 
 # Populating Waarp Database
 # --------------------------------------------------
-echo $(date --rfc-3339=seconds) 
-echo $(date --rfc-3339=seconds) 'Database tables'
-echo $(date --rfc-3339=seconds) --------------------------------------------------
+echo $(date -Iseconds) 
+echo $(date -Iseconds) 'Database tables'
+echo $(date -Iseconds) --------------------------------------------------
 /usr/bin/waarp-r66server ${WAARP_APPNAME} initdb
 
-echo $(date --rfc-3339=seconds) 
-echo $(date --rfc-3339=seconds) 'Authentication data'
-echo $(date --rfc-3339=seconds) --------------------------------------------------
+echo $(date -Iseconds) 
+echo $(date -Iseconds) 'Authentication data'
+echo $(date -Iseconds) --------------------------------------------------
 /usr/bin/waarp-r66server ${WAARP_APPNAME} loadauth /etc/waarp/conf.d/${WAARP_APPNAME}/authent-server.xml
 
 
 # Start Waarp-R66
 # --------------------------------------------------
-echo $(date --rfc-3339=seconds) 
-echo $(date --rfc-3339=seconds) 'Waarp init process completed; ready for start up.'
-echo $(date --rfc-3339=seconds) --------------------------------------------------
+echo $(date -Iseconds) 
+echo $(date -Iseconds) 'Waarp init process completed; ready for start up.'
+echo $(date -Iseconds) --------------------------------------------------
 /usr/bin/waarp-r66server ${WAARP_APPNAME} start
