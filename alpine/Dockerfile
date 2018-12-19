@@ -61,6 +61,8 @@ RUN chown -R waarp:waarp \
     /usr/bin/waarp-pull.sh \
     /usr/bin/waarp-r66server.sh \
  	/usr/bin/waarp-r66client.sh \
+    /etc/certs/ \
+    /etc/conf.d/ \
  	/usr/share/waarp/ \
  	/var/lib/waarp/
 
