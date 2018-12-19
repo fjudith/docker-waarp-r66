@@ -26,9 +26,9 @@ RUN rm -f /tmp/waarp*.rpm
 # Update Waarp Web administration UI
 RUN pushd /tmp/ && \
 	curl -O https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_ZIP_VERSION}-2.zip && \
-	unzip -x /tmp/waarp-r66-${WAARP_R66_VERSION}.zip -d /tmp/ && \
-	cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}/httpadmin/* /usr/share/waarp/r66-admin/ && \
-	rm -rf /tmp/waarp-r66-{WAARP_R66_VERSION}* && \
+	unzip -x /tmp/waarp-r66-${WAARP_R66_ZIP_VERSION}.zip -d /tmp/ && \
+	cp -rf /tmp/waarp-r66-${WAARP_R66_ZIP_VERSION}/httpadmin/* /usr/share/waarp/r66-admin/ && \
+	rm -rf /tmp/waarp-r66-{WAARP_R66_ZIP_VERSION}* && \
 	popd
 
 # Add JDBC drivers
