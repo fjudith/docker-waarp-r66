@@ -1,8 +1,8 @@
 #!/bin/sh
-export SERVER_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/server.xml"
-export CLIENT_CONFIG="/etc/waarp/conf.d/${WAARP_APPNAME}/client.xml"
-export LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-server.xml "
-export LOGSERVER=" -Dlogback.configurationFile=/etc/waarp/conf.d/${WAARP_APPNAME}/logback-client.xml "
+export SERVER_CONFIG="/etc/conf.d/${WAARP_APPNAME}/server.xml"
+export CLIENT_CONFIG="/etc/conf.d/${WAARP_APPNAME}/client.xml"
+export LOGSERVER=" -Dlogback.configurationFile=/etc/conf.d/${WAARP_APPNAME}/logback-server.xml "
+export LOGSERVER=" -Dlogback.configurationFile=/etc/conf.d/${WAARP_APPNAME}/logback-client.xml "
 
 export JAVAEXECCLIENT="java -cp ${R66_CLASSPATH} ${LOGCLIENT} -Dopenr66.locale=en -Dfile.encoding=UTF-8 "
 export JAVAEXECSERVER="java -cp ${R66_CLASSPATH} ${LOGSERVER} -Dopenr66.locale=en -Dfile.encoding=UTF-8 "

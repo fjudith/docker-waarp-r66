@@ -21,7 +21,7 @@ waarp-r66server $SERVERNAME loadauth ${XMLDIR}/authent.xml || exit 2
 waarp-r66server $SERVERNAME loadrule ${XMLDIR}  || exit 2
 
 if [[ -f ${XMLDIR}/gwftp_authent.xml ]]; then
-    mv ${XMLDIR}/gwftp_authent.xml /etc/waarp/conf.d/$SERVERNAME/gwftp_authent.xml
+    mv ${XMLDIR}/gwftp_authent.xml /etc/conf.d/$SERVERNAME/gwftp_authent.xml
 fi
 
 
