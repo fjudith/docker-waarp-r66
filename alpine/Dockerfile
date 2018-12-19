@@ -72,7 +72,7 @@ RUN chmod +x \
     /usr/bin/waarp-password.sh \
     /usr/bin/waarp-pull.sh \
     /usr/bin/waarp-r66server.sh \
- 	/usr/bin/waarp-r66client.sh \
+ 	/usr/bin/waarp-r66client.sh
 
 USER waarp
 
