@@ -4,7 +4,7 @@ LABEL maintainer="Florian JUDITH <florian.judith.b@gmail.com>"
 
 ENV WAARP_R66_VERSION=3.0.10
 
-RUN apk add wget xmlstarlet libxslt
+RUN apk add curl wget xmlstarlet libxslt
 
 # Create waarp user
 RUN addgroup -g 499 waarp && \
