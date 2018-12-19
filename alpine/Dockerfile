@@ -12,13 +12,12 @@ RUN addgroup -g 499 waarp && \
 
 # Install Waarp Web administration UI
 RUN mkdir -p \
-    /etc/waarp \
     /usr/share/waarp \
     /var/lib/waarp
 
 RUN cd /tmp/ && \
 	curl -L https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_VERSION}-1.linux.tar.gz | tar xvzf - && \
-	cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/etc/* /etc/waarp/ && \
+	cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/etc/* /etc/ && \
     cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/share/* /usr/share/waarp/ && \
     cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/bin/* /usr/bin/ && \
 	rm -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1 && \
