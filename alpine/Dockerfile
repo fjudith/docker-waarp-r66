@@ -31,7 +31,7 @@ RUN cd /usr/share/waarp/lib/ && \
 	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jar && \
 	cd /
 
-ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
+ENV R66_CLASSPATH="/usr/share/waarp/lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/lib/*"
 
 # Waarp configuration templatesls
 COPY assets/*.sh /usr/share/waarp/
