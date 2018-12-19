@@ -1,13 +1,9 @@
-FROM centos:6
+FROM amd64/centos:6
 
 LABEL maintainer="Florian JUDITH <florian.judith.b@gmail.com>"
 
-# Create by Waarp RPMs
-# RUN groupadd --system --gid 499 waarp && \
-#	useradd --system --create-home *--shell /bin/bash --gid 499 --uid 499 waarp
-
-ENV WAARP_R66_VERSION=3.0.10-1
-ENV WAARP_R66_ZIP_VERSION=3.0.9-2
+ENV WAARP_R66_VERSION=3.0.10
+ENV WAARP_R66_ZIP_VERSION=3.0.9
 
 RUN yum update -y
 RUN yum install -y epel-release
@@ -21,7 +17,7 @@ RUN yum install -y \
 
 RUN yum clean all
 
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-${WAARP_R66_VERSION}.el6.noarch.rpm -o /tmp/waarp-r66.rpm && \
+RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-${WAARP_R66_VERSION}-1.el6.noarch.rpm -o /tmp/waarp-r66.rpm && \
 	ls -l /tmp && \
 	rpm --force -iv /tmp/waarp-r66.rpm
 
@@ -29,7 +25,7 @@ RUN rm -f /tmp/waarp*.rpm
 
 # Update Waarp Web administration UI
 RUN pushd /tmp/ && \
-	curl -O https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_ZIP_VERSION}.zip && \
+	curl -O https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_ZIP_VERSION}-2.zip && \
 	unzip -x /tmp/waarp-r66-${WAARP_R66_VERSION}.zip -d /tmp/ && \
 	cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}/httpadmin/* /usr/share/waarp/r66-admin/ && \
 	rm -rf /tmp/waarp-r66-{WAARP_R66_VERSION}* && \
