@@ -6,6 +6,10 @@ ENV WAARP_R66_VERSION=3.0.10
 
 RUN apk add wget xmlstarlet libxslt
 
+# Create waarp user
+RUN addgroup -g 499 waarp && \
+    adduser -s /bin/sh -G waarp -u 499 waarp
+
 # Install Waarp Web administration UI
 RUN mkdir -p \
     /etc/waarp \
