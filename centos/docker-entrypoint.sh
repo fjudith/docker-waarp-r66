@@ -61,7 +61,7 @@ elif [ "${WAARP_DATABASE_TYPE}" == "postgresql" ]; then
 fi
 
 ### Wait for Postgres
-function waitfor-postgres {
+function waitfor_postgres {
     until psql -h "${WAARP_DATABASE_HOST}" -c '\q'; do
         >&2 echo "Postgres is unavailable: Sleeping"
         sleep 1
