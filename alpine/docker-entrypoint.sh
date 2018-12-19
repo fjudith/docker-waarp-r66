@@ -353,12 +353,12 @@ ${CLIENT_CONFIG}
 echo $(date -Iseconds) 
 echo $(date -Iseconds) 'Database tables'
 echo $(date -Iseconds) --------------------------------------------------
-/usr/bin/waarp-r66server ${WAARP_APPNAME} initdb
+/usr/bin/waarp-r66server.sh ${WAARP_APPNAME} initdb
 
 echo $(date -Iseconds) 
 echo $(date -Iseconds) 'Authentication data'
 echo $(date -Iseconds) --------------------------------------------------
-/usr/bin/waarp-r66server ${WAARP_APPNAME} loadauth /etc/waarp/conf.d/${WAARP_APPNAME}/authent-server.xml
+/usr/bin/waarp-r66server.sh ${WAARP_APPNAME} loadauth /etc/waarp/conf.d/${WAARP_APPNAME}/authent-server.xml
 
 
 # Start Waarp-R66
@@ -366,4 +366,4 @@ echo $(date -Iseconds) --------------------------------------------------
 echo $(date -Iseconds) 
 echo $(date -Iseconds) 'Waarp init process completed; ready for start up.'
 echo $(date -Iseconds) --------------------------------------------------
-/usr/bin/waarp-r66server ${WAARP_APPNAME} start
+/usr/bin/waarp-r66server.sh ${WAARP_APPNAME} start
