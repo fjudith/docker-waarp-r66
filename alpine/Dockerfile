@@ -38,7 +38,7 @@ RUN chmod 755 /usr/share/waarp/*.sh && \
 	echo "export TERM=xterm-256color" >> ~/.bashrc && \
 	echo ". /usr/share/waarp/init-commands.sh" >> ~/.bashrc
 
-ADD assets/certs/* /etc/waarp/certs/
+ADD assets/certs/* /etc/certs/
 ADD assets/conf.d/ /tmp/conf.d/
 
 COPY docker-entrypoint.sh /
@@ -61,7 +61,6 @@ RUN chown -R waarp:waarp \
     /usr/bin/waarp-pull.sh \
     /usr/bin/waarp-r66server.sh \
  	/usr/bin/waarp-r66client.sh \
- 	/etc/waarp/ \
  	/usr/share/waarp/ \
  	/var/lib/waarp/
 
