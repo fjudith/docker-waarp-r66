@@ -16,18 +16,18 @@ export JAVA_RUN="${JAVA_HOME}/bin/java"
 
 export PATH=${JAVA_HOME}/bin:$PATH
 
-export CONFDIR=${CONFDIR:-/etc/conf.d/$WAARP_APPNAME}
+export CONFDIR=${CONFDIR:-/usr/share/waarp/etc/conf.d/$WAARP_APPNAME}
 export PIDFILE=/var/lib/waarp/${WAARP_APPNAME}/r66server.pid
 
-export SERVER_CONFIG="/etc/conf.d/${WAARP_APPNAME}/server.xml"
-export CLIENT_CONFIG="/etc/conf.d/${WAARP_APPNAME}/client.xml"
+export SERVER_CONFIG="/usr/share/waarp/etc/conf.d/${WAARP_APPNAME}/server.xml"
+export CLIENT_CONFIG="/usr/share/waarp/etc/conf.d/${WAARP_APPNAME}/client.xml"
 export LOGSERVER=" -Dlogback.configurationFile=${CONFDIR}/logback-gwftp.xml "
 export LOGCLIENT=" -Dlogback.configurationFile=${CONFDIR}/logback-client.xml "
 
 export JAVARUNCLIENT="${JAVA_RUN} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGCLIENT} "
 export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPATH} ${LOGSERVER} "
 
-export R66_CLASSPATH="/usr/share/waarp/lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/lib/*"
+export R66_CLASSPATH="/usr/share/waarp/share/lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/share/lib/*"
 
 source /usr/share/waarp/init-commands.sh
 
@@ -95,9 +95,9 @@ export WAARP_SNMP_PRIVPASS=${WAARP_SNMP_PRIVPASS:-"password"}
 echo $(date -Iseconds) 'Deploying XML configuration files if required'
 
 if [ ! -f ${SERVER_CONFIG} ]; then
-    mkdir -v -p "/etc/conf.d/${WAARP_APPNAME}"
-    mkdir -v -p "/etc/certs"
-    cp -v /tmp/conf.d/template/*.xml /etc/conf.d/${WAARP_APPNAME}/
+    mkdir -v -p "/usr/share/waarp/etc/conf.d/${WAARP_APPNAME}"
+    mkdir -v -p "/usr/share/waarp/etc/certs"
+    cp -v /tmp/conf.d/template/*.xml /usr/share/waarp/etc/conf.d/${WAARP_APPNAME}/
 fi
 
 
@@ -130,20 +130,20 @@ ${CLIENT_CONFIG}
 # Initializing Waarp Password file.
 # Update password if key already exists.
 # --------------------------------------------------
-if [ ! -f "/etc/certs/${WAARP_APPNAME}-admin-passwd.ggp" ]; then
+if [ ! -f "/usr/share/waarp/etc/certs/${WAARP_APPNAME}-admin-passwd.ggp" ]; then
 	echo $(date -Iseconds) 'Initializing Waarp password file'
 	WAARP_CRYPTED_PASSWORD=$(
     	java -cp "${R66_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
-	    -des -ko "/etc/certs/cryptokey.des" \
-	    -po "/etc/certs/${WAARP_APPNAME}-admin-passwd.ggp" 2>&1 | \
+	    -des -ko "/usr/share/waarp/etc/certs/cryptokey.des" \
+	    -po "/usr/share/waarp/etc/certs/${WAARP_APPNAME}-admin-passwd.ggp" 2>&1 | \
 	    grep "CryptedPwd:" | sed 's#CryptedPwd\:\s##g' \
 	)
 else
 	echo $(date -Iseconds) 'Updating Waarp password file'
 	WAARP_CRYPTED_PASSWORD=$(
     	java -cp "${R66_CLASSPATH}" org.waarp.uip.WaarpPassword -pwd "${WAARP_ADMIN_PASSWORD}" \
-	    -des -ki "/etc/certs/cryptokey.des" \
-	    -po "/etc/certs/${WAARP_APPNAME}-admin-passwd.ggp" 2>&1 | \
+	    -des -ki "/usr/share/waarp/etc/certs/cryptokey.des" \
+	    -po "/usr/share/waarp/etc/certs/${WAARP_APPNAME}-admin-passwd.ggp" 2>&1 | \
 	    grep "CryptedPwd:" | sed 's#CryptedPwd\:\s##g' \
 	)
 fi
@@ -151,8 +151,8 @@ fi
 xmlstarlet ed -P -S -L \
 -u "/config/identity/hostid" -v "${WAARP_APPNAME}" \
 -u "/config/identity/sslhostid" -v "${WAARP_APPNAME}-ssl" \
--u "/config/identity/cryptokey" -v "/etc/certs/cryptokey.des" \
--u "/config/identity/authentfile" -v "/etc/conf.d/${WAARP_APPNAME}/authent-server.xml" \
+-u "/config/identity/cryptokey" -v "/usr/share/waarp/etc/certs/cryptokey.des" \
+-u "/config/identity/authentfile" -v "/usr/share/waarp/etc/conf.d/${WAARP_APPNAME}/authent-server.xml" \
 -u "/config/server/serverpasswd" -v "${WAARP_CRYPTED_PASSWORD}" \
 -u "/config/business/businessid" -v "${WAARP_APPNAME}" \
 -u "/config/business/businessid" -v "${WAARP_APPNAME}-ssl" \
@@ -161,8 +161,8 @@ ${SERVER_CONFIG}
 xmlstarlet ed -P -S -L \
 -u "/config/identity/hostid" -v "${WAARP_APPNAME}" \
 -u "/config/identity/sslhostid" -v "${WAARP_APPNAME}-ssl" \
--u "/config/identity/cryptokey" -v "/etc/certs/cryptokey.des" \
--u "/config/identity/authentfile" -v "/etc/conf.d/${WAARP_APPNAME}/authent-server.xml" \
+-u "/config/identity/cryptokey" -v "/usr/share/waarp/etc/certs/cryptokey.des" \
+-u "/config/identity/authentfile" -v "/usr/share/waarp/etc/conf.d/${WAARP_APPNAME}/authent-server.xml" \
 -u "/config/server/serverpasswd" -v "${WAARP_CRYPTED_PASSWORD}" \
 ${CLIENT_CONFIG}
 
@@ -170,7 +170,7 @@ ${CLIENT_CONFIG}
 # --------------------------------------------------
 echo $(date -Iseconds) 'Initializing Waarp authentication XML file'
 
-if [ ! -f "/etc/conf.d/${WAARP_APPNAME}/authent-server.xml" ]; then
+if [ ! -f "/usr/share/waarp/etc/conf.d/${WAARP_APPNAME}/authent-server.xml" ]; then
     echo '<?xml version="1.0" encoding="UTF-8"?><authent xmlns:x0="http://www.w3.org/2001/XMLSchema"></authent>' | xmlstarlet ed \
     -s "/authent" -t elem -n entry -v "" \
     -s "/authent/entry" -t elem -n hostid -v ${WAARP_APPNAME} \
@@ -178,15 +178,15 @@ if [ ! -f "/etc/conf.d/${WAARP_APPNAME}/authent-server.xml" ]; then
     -s "/authent/entry" -t elem -n port -v "6666" \
     -s "/authent/entry" -t elem -n isssl -v "false" \
     -s "/authent/entry" -t elem -n admin -v "false" \
-    -s "/authent/entry" -t elem -n keyfile -v "/etc/certs/${WAARP_APPNAME}-admin-passwd.ggp" \
+    -s "/authent/entry" -t elem -n keyfile -v "/usr/share/waarp/etc/certs/${WAARP_APPNAME}-admin-passwd.ggp" \
     -s "/authent" -t elem -n entry -v "" \
     -s "/authent/entry" -t elem -n hostid -v "${WAARP_APPNAME}-ssl" \
     -s "/authent/entry" -t elem -n address -v "127.0.0.1" \
     -s "/authent/entry" -t elem -n port -v "6667" \
     -s "/authent/entry" -t elem -n isssl -v "true" \
     -s "/authent/entry" -t elem -n admin -v "true" \
-    -s "/authent/entry" -t elem -n keyfile -v "/etc/certs/${WAARP_APPNAME}-admin-passwd.ggp" \
-    > /etc/conf.d/${WAARP_APPNAME}/authent-server.xml
+    -s "/authent/entry" -t elem -n keyfile -v "/usr/share/waarp/etc/certs/${WAARP_APPNAME}-admin-passwd.ggp" \
+    > /usr/share/waarp/etc/conf.d/${WAARP_APPNAME}/authent-server.xml
 fi
 
 
@@ -195,75 +195,75 @@ fi
 echo $(date -Iseconds) 'Initializing Waarp SSL'
 
 # Admin
-if [ ! -f "/etc/certs/${WAARP_APPNAME}_admkey.jks" ]; then
+if [ ! -f "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_admkey.jks" ]; then
     echo $(date -Iseconds) "Generating admin key"
     
     keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEYALG} \
     -sigalg ${WAARP_SIGALG} -validity "${WAARP_KEYVAL}" \
     -alias "${WAARP_APPNAME}_admkey" \
     -dname "${WAARP_SSL_DNAME}" \
-    -keystore "/etc/certs/${WAARP_APPNAME}_admkey.jks" \
+    -keystore "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_admkey.jks" \
     -storepass "${WAARP_ADMKEYSTOREPASS}" \
     -keypass "${WAARP_ADMKEYPASS}"
 
     xmlstarlet ed -P -S -L \
-    -u "/config/server/admkeypath" -v "/etc/certs/${WAARP_APPNAME}_admkey.jks" \
+    -u "/config/server/admkeypath" -v "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_admkey.jks" \
     -u "/config/server/admkeystorepass" -v ${WAARP_ADMKEYSTOREPASS}  \
     -u "/config/server/admkeypass" -v ${WAARP_ADMKEYPASS} \
     ${SERVER_CONFIG}
 fi
 
 # Server
-if [ ! -f "/etc/certs/${WAARP_APPNAME}_server.jks" ]; then
+if [ ! -f "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_server.jks" ]; then
     echo $(date -Iseconds) "Generating server key"
     
     keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEYALG} \
     -sigalg ${WAARP_SIGALG} -validity "${WAARP_KEYVAL}" \
     -alias "${WAARP_APPNAME}_server" \
     -dname "${WAARP_SSL_DNAME}" \
-    -keystore "/etc/certs/${WAARP_APPNAME}_server.jks" \
+    -keystore "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_server.jks" \
     -storepass "${WAARP_KEYSTOREPASS}" \
     -keypass "${WAARP_KEYPASS}"
 
     xmlstarlet ed -P -S -L \
-    -u "/config/ssl/keypath" -v "/etc/certs/${WAARP_APPNAME}_server.jks" \
+    -u "/config/ssl/keypath" -v "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_server.jks" \
     -u "/config/ssl/keystorepass" -v ${WAARP_KEYSTOREPASS}  \
     -u "/config/ssl/keypass" -v ${WAARP_KEYPASS} \
     ${SERVER_CONFIG}
 
     xmlstarlet ed -P -S -L \
-    -u "/config/ssl/keypath" -v "/etc/certs/${WAARP_APPNAME}_server.jks" \
+    -u "/config/ssl/keypath" -v "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_server.jks" \
     -u "/config/ssl/keystorepass" -v ${WAARP_KEYSTOREPASS}  \
     -u "/config/ssl/keypass" -v ${WAARP_KEYPASS} \
     ${CLIENT_CONFIG}
 fi
 
 # Trust
-if [ ! -f "/etc/certs/${WAARP_APPNAME}_trust.jks" ]; then
+if [ ! -f "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_trust.jks" ]; then
     echo $(date -Iseconds) "Generating trust key"
     
     keytool -noprompt -genkey -keysize ${WAARP_KEYSIZE} -keyalg ${WAARP_KEYALG} \
     -sigalg ${WAARP_SIGALG} -validity "${WAARP_KEYVAL}" \
     -alias "${WAARP_APPNAME}_trust" \
     -dname "${WAARP_SSL_DNAME}" \
-    -keystore "/etc/certs/${WAARP_APPNAME}_trust.jks" \
+    -keystore "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_trust.jks" \
     -storepass "${WAARP_TRUSTKEYSTOREPASS}"  \
     -keypass "${WAARP_TRUSTKEYSTOREPASS}"
 
     xmlstarlet ed -P -S -L \
-    -u "/config/ssl/trustkeypath" -v "/etc/certs/${WAARP_APPNAME}_trust.jks" \
+    -u "/config/ssl/trustkeypath" -v "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_trust.jks" \
     -u "/config/ssl/trustkeystorepass" -v ${WAARP_TRUSTKEYSTOREPASS} \
     ${SERVER_CONFIG}
 
     xmlstarlet ed -P -S -L \
-    -u "/config/ssl/trustkeypath" -v "/etc/certs/${WAARP_APPNAME}_trust.jks" \
+    -u "/config/ssl/trustkeypath" -v "/usr/share/waarp/etc/certs/${WAARP_APPNAME}_trust.jks" \
     -u "/config/ssl/trustkeystorepass" -v ${WAARP_TRUSTKEYSTOREPASS} \
     ${CLIENT_CONFIG}
 fi
 
 # REST API
-if [ ! -f "/etc/certs/restsigning.key" ]; then
-    cat /dev/urandom | head -c64 > /etc/certs/restsigning.key
+if [ ! -f "/usr/share/waarp/etc/certs/restsigning.key" ]; then
+    cat /dev/urandom | head -c64 > /usr/share/waarp/etc/certs/restsigning.key
 fi
 
 # Initializing Waarp SNMP file
@@ -271,13 +271,13 @@ fi
 echo $(date -Iseconds) 'Initializing Waarp SNMP file'
 
 xmlstarlet ed -P -S -L \
--u "/config/server/snmpconfig" -v "/etc/conf.d/${WAARP_APPNAME}/snmpconfig.xml" \
+-u "/config/server/snmpconfig" -v "/usr/share/waarp/etc/conf.d/${WAARP_APPNAME}/snmpconfig.xml" \
 ${SERVER_CONFIG}
 
 xmlstarlet ed -P -S -L \
 -u "/snmpconfig/securities/security/securityauthpass" -v ${WAARP_SNMP_AUTHPASS} \
 -u "/snmpconfig/securities/security/securityprivpass" -v ${WAARP_SNMP_PRIVPASS} \
-/etc/conf.d/${WAARP_APPNAME}/snmpconfig.xml
+/usr/share/waarp/etc/conf.d/${WAARP_APPNAME}/snmpconfig.xml
 
 echo $(date -Iseconds) 'Initializing Waarp Database'
 
@@ -348,7 +348,7 @@ xmlstarlet ed -P -S -L \
 -u "/config/db/dbpasswd" -v "${WAARP_DATABASE_PASSWORD}" \
 ${CLIENT_CONFIG}
 
-tree /etc/conf.d
+tree /usr/share/waarp/etc/conf.d
 
 # Populating Waarp Database
 # --------------------------------------------------
@@ -360,7 +360,7 @@ echo $(date -Iseconds) --------------------------------------------------
 echo $(date -Iseconds) 
 echo $(date -Iseconds) 'Authentication data'
 echo $(date -Iseconds) --------------------------------------------------
-/usr/bin/waarp-r66server.sh ${WAARP_APPNAME} loadauth /etc/conf.d/${WAARP_APPNAME}/authent-server.xml
+/usr/bin/waarp-r66server.sh ${WAARP_APPNAME} loadauth /usr/share/waarp/etc/conf.d/${WAARP_APPNAME}/authent-server.xml
 
 
 # Start Waarp-R66

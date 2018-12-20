@@ -3,7 +3,7 @@
     <hostid>server</hostid>
     <sslhostid>server-ssl</sslhostid>
     <cryptokey></cryptokey>
-    <authentfile>/etc/conf.d/server1/authent-server.xml</authentfile>
+    <authentfile>/usr/share/waarp/etc/conf.d/server1/authent-server.xml</authentfile>
   </identity>
   <server>
     <serveradmin>admin</serveradmin>
@@ -13,7 +13,7 @@
     <usehttpcomp>False</usehttpcomp>
     <uselocalexec>False</uselocalexec>
     <httpadmin>/usr/share/waarp/r66-admin</httpadmin>
-    <admkeypath>/etc/certs/adminkey.jks</admkeypath>
+    <admkeypath>/usr/share/waarp/etc/certs/adminkey.jks</admkeypath>
     <admkeystorepass>password</admkeystorepass>
     <admkeypass>password</admkeypass>
     <checkaddress>False</checkaddress>
@@ -30,10 +30,10 @@
     <serverhttpsport>8067</serverhttpsport>
   </network>
   <ssl>
-    <keypath>/etc/certs/key.jks</keypath>
+    <keypath>/usr/share/waarp/etc/certs/key.jks</keypath>
     <keystorepass>password</keystorepass>
     <keypass>password</keypass>
-    <trustkeypath>/etc/certs/trustkey.jks</trustkeypath>
+    <trustkeypath>/usr/share/waarp/etc/certs/trustkey.jks</trustkeypath>
     <trustkeystorepass>password</trustkeystorepass>
     <trustuseclientauthenticate>True</trustuseclientauthenticate>
   </ssl>
@@ -52,7 +52,7 @@
     <restauthenticated>true</restauthenticated>
     <resttimelimit>3000</resttimelimit>
     <restsignature>true</restsignature>
-    <restsigkey>/etc/certs/restsigning.key</restsigkey>
+    <restsigkey>/usr/share/waarp/etc/certs/restsigning.key</restsigkey>
     <restmethod>
       <restname>ALL</restname>
       <restcrud>CRUD</restcrud>

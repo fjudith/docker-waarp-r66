@@ -7,10 +7,10 @@
   </identity>
   <client/>
   <ssl>
-    <keypath>/etc/certs/key.jks</keypath>
+    <keypath>/usr/share/waarp/etc/certs/key.jks</keypath>
     <keystorepass>password</keystorepass>
     <keypass>password</keypass>
-    <trustkeypath>/etc/certs/trustkey.jks</trustkeypath>
+    <trustkeypath>/usr/share/waarp/etc/certs/trustkey.jks</trustkeypath>
     <trustkeystorepass>password</trustkeystorepass>
     <trustuseclientauthenticate>True</trustuseclientauthenticate>
   </ssl>
