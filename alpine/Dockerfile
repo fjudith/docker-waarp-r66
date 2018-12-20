@@ -66,17 +66,17 @@ RUN chown -R waarp:waarp \
  	/usr/share/waarp/ \
  	/var/lib/waarp/
 
-RUN chmod +x \
- 	/usr/bin/manager-send.sh \
-    /usr/bin/variables.sh \
-    /usr/bin/waarp-password.sh \
-    /usr/bin/waarp-pull.sh \
-    /usr/bin/waarp-r66server.sh \
- 	/usr/bin/waarp-r66client.sh
+# RUN chmod +x \
+#  	/usr/bin/manager-send.sh \
+#     /usr/bin/variables.sh \
+#     /usr/bin/waarp-password.sh \
+#     /usr/bin/waarp-pull.sh \
+#     /usr/bin/waarp-r66server.sh \
+#  	/usr/bin/waarp-r66client.sh
 
 USER waarp
 
-WORKDIR /usr/share/waarp
+# WORKDIR /usr/share/waarp
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
