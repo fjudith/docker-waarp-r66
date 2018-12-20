@@ -32,9 +32,7 @@ RUN pushd /usr/share/waarp/r66-lib/ && \
 ENV R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
 
 # Waarp configuration templatesls
-COPY assets/*.sh /usr/share/waarp/
-RUN chmod 755 /usr/share/waarp/*.sh && \
-	echo "export TERM=xterm-256color" >> ~/.bashrc && \
+RUN echo "export TERM=xterm-256color" >> ~/.bashrc && \
 	echo ". /usr/share/waarp/init-commands.sh" >> ~/.bashrc
 
 ADD assets/certs/* /etc/waarp/certs/
