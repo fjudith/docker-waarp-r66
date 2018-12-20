@@ -2,8 +2,8 @@
 
 [3.0.10, centos, latest](https://github.com/fjudith/docker-waarp-r66/tree/3.0.10/centos)
 [3.0.10-alpine, alpine](https://github.com/fjudith/docker-waarp-r66/tree/3.0.10/alpine)
-[3.0.9, centos](https://github.com/fjudith/docker-waarp-r66/tree/3.0.9/centos)
-[3.0.9-alpine, alpine](https://github.com/fjudith/docker-waarp-r66/tree/3.0.9/alpine)
+[3.0.9](https://github.com/fjudith/docker-waarp-r66/tree/3.0.9/centos)
+[3.0.9-alpine](https://github.com/fjudith/docker-waarp-r66/tree/3.0.9/alpine)
 [3.0.8](https://github.com/fjudith/docker-waarp-r66/tree/3.0.8)
 [3.0.7](https://github.com/fjudith/docker-waarp-r66/tree/3.0.7)
 
