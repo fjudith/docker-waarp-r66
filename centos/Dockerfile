@@ -2,7 +2,7 @@ FROM amd64/centos:6
 
 LABEL maintainer="Florian JUDITH <florian.judith.b@gmail.com>"
 
-ENV WAARP_R66_VERSION=3.0.10
+ENV WAARP_R66_VERSION=3.0.9
 
 RUN yum update -y
 RUN yum install -y epel-release
@@ -16,7 +16,7 @@ RUN yum install -y \
 
 RUN yum clean all
 
-RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-${WAARP_R66_VERSION}-1.el6.noarch.rpm -o /tmp/waarp-r66.rpm && \
+RUN curl https://dl.waarp.org/repos/rhel6/waarp-r66-${WAARP_R66_VERSION}-2.el6.noarch.rpm -o /tmp/waarp-r66.rpm && \
 	ls -l /tmp && \
 	rpm --force -iv /tmp/waarp-r66.rpm
 

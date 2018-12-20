@@ -2,7 +2,7 @@ FROM amd64/openjdk:8-jdk-alpine
 
 LABEL maintainer="Florian JUDITH <florian.judith.b@gmail.com>"
 
-ENV WAARP_R66_VERSION=3.0.10
+ENV WAARP_R66_VERSION=3.0.9
 
 RUN apk add bash tree curl wget xmlstarlet libxslt
 
@@ -18,10 +18,10 @@ RUN mkdir -p \
     /var/log/waarp
 
 RUN cd /tmp/ && \
-	curl -L https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_VERSION}-1.linux.tar.gz | tar xvzf - && \
-	cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/bin /usr/share/waarp/ && \
-    cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1/share /usr/share/waarp/ && \
-	rm -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-1 && \
+	curl -L https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_VERSION}-2.linux.tar.gz | tar xvzf - && \
+	cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-2/bin /usr/share/waarp/ && \
+    cp -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-2/share /usr/share/waarp/ && \
+	rm -rf /tmp/waarp-r66-${WAARP_R66_VERSION}-2 && \
 	cd /
 
 # Add JDBC drivers
