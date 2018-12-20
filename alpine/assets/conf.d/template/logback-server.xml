@@ -20,7 +20,7 @@
 
   <appender name="STDOUT"
     class="ch.qos.logback.core.ConsoleAppender">
-    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+    <encoder>
       <Pattern>%date{dd/MM/yyyy/HH:mm:ss.SSS} %level [%logger] [%thread] %msg%n</Pattern>
     </encoder>
   </appender>
@@ -35,6 +35,7 @@
   <root>
     <level value="warn" />
     <appender-ref ref="FILE" />
+    <appender-ref ref="STDOUT" />
     <!-- <appender-ref ref="SYSLOG" /> -->
   </root>
 </configuration>
