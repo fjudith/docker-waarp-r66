@@ -13,7 +13,8 @@ RUN addgroup -g 499 waarp && \
 # Install Waarp Web administration UI
 RUN mkdir -p \
     /usr/share/waarp \
-    /var/lib/waarp
+    /var/lib/waarp \
+    /var/log/waarp
 
 RUN cd /tmp/ && \
 	curl -L https://dl.waarp.org/dist/waarp-r66/3.0/waarp-r66-${WAARP_R66_VERSION}-1.linux.tar.gz | tar xvzf - && \
@@ -54,7 +55,8 @@ EXPOSE 8088
 # Create spool and flags directories and apply permission to waarp user
 RUN chown -R waarp:waarp \
  	/usr/share/waarp/ \
- 	/var/lib/waarp/
+ 	/var/lib/waarp/ \
+    /var/log/waarp/
 
 USER waarp
 
