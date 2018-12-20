@@ -12,7 +12,7 @@
     <usessl>true</usessl>
     <usehttpcomp>False</usehttpcomp>
     <uselocalexec>False</uselocalexec>
-    <httpadmin>/usr/share/waarp/r66-admin</httpadmin>
+    <httpadmin>/usr/share/waarp/share/r66-admin</httpadmin>
     <admkeypath>/usr/share/waarp/etc/certs/adminkey.jks</admkeypath>
     <admkeystorepass>password</admkeystorepass>
     <admkeypass>password</admkeypass>
