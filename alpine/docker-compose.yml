@@ -7,7 +7,7 @@ volumes:
   waarp-site2-db:
 services:
   postgres:
-    image: postgres
+    image: postgres:alpine
     environment:
       POSTGRES_DB: waarp-site2
       POSTGRES_PASSWORD: V3ry1nS3cur3P4ssw0rd
