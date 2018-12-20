@@ -346,6 +346,7 @@ xmlstarlet ed -P -S -L \
 -u "/config/db/dbpasswd" -v "${WAARP_DATABASE_PASSWORD}" \
 ${CLIENT_CONFIG}
 
+tree /usr/share/waarp/etc
 
 # Populating Waarp Database
 # --------------------------------------------------

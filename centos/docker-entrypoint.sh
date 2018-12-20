@@ -29,8 +29,6 @@ export JAVARUNSERVER="${JAVA_RUN} ${JAVA_OPTS1} ${JAVA_OPTS2} -cp ${R66_CLASSPAT
 
 export R66_CLASSPATH="/usr/share/waarp/r66-lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/r66-lib/*"
 
-source /usr/share/waarp/init-commands.sh
-
 # Initializing Command Line Tools.
 # The script contains command line tools
 # to interact with Waarp engine.
