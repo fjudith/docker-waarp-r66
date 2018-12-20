@@ -1,11 +1,11 @@
 [![](https://images.microbadger.com/badges/image/fjudith/waarp-r66.svg)](https://microbadger.com/images/fjudith/waarp-r66 "Get your own image badge on microbadger.com") [![Build Status](https://travis-ci.org/fjudith/docker-waarp-r66.svg?branch=master)](https://travis-ci.org/fjudith/docker-waarp-r66)
 
-[3.0.10, latest](https://github.com/fjudith/docker-waarp-r66/tree/3.0.10/centos)
-[3.0.10-alpine, alpine](https://github.com/fjudith/docker-waarp-r66/tree/3.0.10/alpine)
-[3.0.9](https://github.com/fjudith/docker-waarp-r66/tree/3.0.9/centos)
-[3.0.9-alpine](https://github.com/fjudith/docker-waarp-r66/tree/3.0.9/alpine)
-[3.0.8](https://github.com/fjudith/docker-waarp-r66/tree/3.0.8)
-[3.0.7](https://github.com/fjudith/docker-waarp-r66/tree/3.0.7)
+* [3.0.10, latest](https://github.com/fjudith/docker-waarp-r66/tree/3.0.10/centos)
+* [3.0.10-alpine, alpine](https://github.com/fjudith/docker-waarp-r66/tree/3.0.10/alpine)
+* [3.0.9](https://github.com/fjudith/docker-waarp-r66/tree/3.0.9/centos)
+* [3.0.9-alpine](https://github.com/fjudith/docker-waarp-r66/tree/3.0.9/alpine)
+* [3.0.8](https://github.com/fjudith/docker-waarp-r66/tree/3.0.8)
+* [3.0.7](https://github.com/fjudith/docker-waarp-r66/tree/3.0.7)
 
 
 # Introduction
