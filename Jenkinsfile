@@ -17,23 +17,39 @@ pipeline {
 
                     if ("${BRANCH_NAME}" == "master"){
                         TAG = "latest"
+                        ALPINE_TAG= "alpine"
                     }
                     else {
-                        TAG = "${BRANCH_NAME}"                       
+                        TAG = "${BRANCH_NAME}"
+                        ALPINE_TAG = "${BRANCH_NAME}-alpine"                     
                     }
                 }
                 sh 'printenv'
             }
         }
-        stage ('Build Waarp R66 application server') {
-            agent { label 'docker'}
-            steps {
-                sh "docker build -f ./Dockerfile -t ${REPO}:${COMMIT} ./"
+        parallel {
+            stage ('Build CentOS based Waarp R66 application server') {
+                agent { label 'docker'}
+                steps {
+                    sh "docker build -f ./centos/ Dockerfile -t ${REPO}:${COMMIT} ./centos/"
+                }
+                post {
+                    success {
+                        echo 'Tag for private registry'
+                        sh "docker tag ${REPO}:${COMMIT} ${PRIVATE_REPO}:${TAG}"
+                    }
+                }
             }
-            post {
-                success {
-                    echo 'Tag for private registry'
-                    sh "docker tag ${REPO}:${COMMIT} ${PRIVATE_REPO}:${TAG}"
+            stage ('Build Alpine based Waarp R66 application server') {
+                agent { label 'docker'}
+                steps {
+                    sh "docker build -f ./alpine/Dockerfile -t ${REPO}:${COMMIT}-alpine ./alpine/"
+                }
+                post {
+                    success {
+                        echo 'Tag for private registry'
+                        sh "docker tag ${REPO}:${COMMIT}-alpine ${PRIVATE_REPO}:${ALPINE_TAG}"
+                    }
                 }
             }
         }
@@ -74,6 +90,7 @@ pipeline {
                 success {
                     sh "docker login -u ${DOCKER_PRIVATE_USR} -p ${DOCKER_PRIVATE_PSW} ${PRIVATE_REGISTRY}"
                     sh "docker push ${PRIVATE_REPO}:${TAG}"
+                    sh "docker push ${PRIVATE_REPO}:${ALPINE_TAG}"
                 }
             }
         }
