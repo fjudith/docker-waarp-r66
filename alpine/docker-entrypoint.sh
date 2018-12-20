@@ -348,7 +348,6 @@ xmlstarlet ed -P -S -L \
 -u "/config/db/dbpasswd" -v "${WAARP_DATABASE_PASSWORD}" \
 ${CLIENT_CONFIG}
 
-tree /usr/share/waarp/etc/conf.d
 
 # Populating Waarp Database
 # --------------------------------------------------
@@ -369,3 +368,5 @@ echo $(date -Iseconds)
 echo $(date -Iseconds) 'Waarp init process completed; ready for start up.'
 echo $(date -Iseconds) --------------------------------------------------
 /usr/share/waarp/bin/waarp-r66server.sh ${WAARP_APPNAME} start
+
+cat /var/log/waarp/server.log
