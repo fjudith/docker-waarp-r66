@@ -24,9 +24,9 @@ RUN cd /tmp/ && \
 
 # Add JDBC drivers
 RUN cd /usr/share/waarp/share/lib/ && \
-	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jre6.jar && \
-	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jre7.jar && \
-	curl -O https://jdbc.postgresql.org/download/postgresql-42.0.0.jar && \
+	curl -O https://jdbc.postgresql.org/download/postgresql-42.1.4.jre6.jar && \
+	curl -O https://jdbc.postgresql.org/download/postgresql-42.1.4.jre7.jar && \
+	curl -O https://jdbc.postgresql.org/download/postgresql-42.1.4.jar && \
 	cd /
 
 ENV R66_CLASSPATH="/usr/share/waarp/share/lib/WaarpR66-${WAARP_R66_VERSION}.jar:/usr/share/waarp/share/lib/*"
